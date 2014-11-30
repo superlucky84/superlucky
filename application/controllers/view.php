@@ -17,11 +17,7 @@ class View extends CI_Controller {
 	 * 메인 페이지
 	 */
 	public function main(){
-		echo "view";
 		$this->load->view('main.html');
 	}
 
 }
-
-/* End of file welcome.php */
-/* Location: ./application/controllers/welcome.php */
