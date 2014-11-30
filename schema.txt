@@ -1,0 +1,17 @@
+/*
+ * 유저 테이블
+ */
+CREATE TABLE users ( 
+	user_seq int(11) NOT NULL auto_increment,
+	id varchar(30) NOT NULL,
+	pass varchar(50) NOT NULL,
+	regdate datetime NOT NULL,
+	logindate datetime NOT NULL,
+	title varchar(200) NOT NULL default '',
+	PRIMARY KEY (user_seq),
+	UNIQUE KEY ix_id(id)
+)ENGINE=InnoDB;
+
+
+
+
