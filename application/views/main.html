@@ -1,30 +1,128 @@
 <!DOCTYPE html>
-<html ng-app="superlucky" >
+<html ng-app="typingIo" >
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>SUPERLUCKY</title>
 <script src="/asset/js/angular.js"></script>
+<link rel="stylesheet" type="text/css" href="/asset/css/typing.css" />
 </head>
 <body ng-controller="typingController" ng-click="focus_setting()">
-<input type="text" id="ng_target" ng-model="keytarget" ng-keydown="key_fun()" ng-blur="key_blur()">
+<input type="text" id="ng_target" ng-model="keytarget" ng-keypress="key_press($event)" ng-keydown="key_down($event)" ng-blur="key_blur($event)">
 <input type="text" ng-model="keycode">
-<div  style="border:1px solid green;width:500px;height:500px">
-	{{ typing_contents }}
+<div id="typing_area">
 </div>
 <script>
-var superlucky = angular.module('superlucky', []);
-superlucky.controller('typingController', function ($scope) {
+var typingIo = angular.module('typingIo', []);
+typingIo.controller('typingController', function ($scope,$http) {
 
-	$scope.typing_contents = "jj";
-		
-	$scope.keycode = "";
-	$scope.key_fun = function(){
-		$scope.keycode = event.keyCode;
+
+	var typing = {
+		$DIV : angular.element(document.getElementById('typing_area')),
+		show_cnt : -1,
+		show_code : [32,34,39,40,41,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,186,187,188,189,190,191,192,219,220,221,222],
+
+		keycode : function(ev){
+			var keyCode = 0;
+			if(ev.keyCode==0){
+				keyCode = ev.which;
+			}else{
+				keyCode = ev.keyCode;
+			}
+			return keyCode;
+		},
+		init : function(){
+			$http({ url: '/typing/prototype', method: "GET" }).
+			success(function(data){
+				if(data.result == 'true'){
+					var words_array = data.data.split('');
+					var word_total = 0;
+					for(word in words_array){
+
+						var words_text = words_array[word];
+
+						if(words_text == " "){
+							words_text = "&nbsp;";
+						}
+						if(words_text == "\n"){
+							typing.$DIV.append("<br>");
+						}
+
+						var class_t = "init";
+						if(word_total==0){
+							class_t += " cursor";
+						}
+
+						var $SPAN = angular.element("<span class='"+class_t+"'>"+words_text+"</span>");
+						typing.$DIV.append($SPAN);
+						word_total++;
+
+					}
+				}
+				else{
+					alert('fail');
+				}
+			}).
+			error(function(data){
+				alert('SERVER ERROR');
+			});
+	    }
 	}
+
 	$scope.key_blur = function(){
 		document.getElementById("ng_target").focus();
 	}
 	document.getElementById("ng_target").focus();
+
+	$scope.key_down = function(event){
+		var keyCode = typing.keycode(event);
+
+		if(keyCode == 8 && typing.show_cnt > -1){
+
+			$SPAN = typing.$DIV.find('span');
+			$SPAN.eq(typing.show_cnt).attr('class','init');
+
+			var remove_cursor_cnt = typing.show_cnt +1;
+			$SPAN.eq(typing.show_cnt).addClass("cursor");
+			$SPAN.eq(remove_cursor_cnt).removeClass("cursor");
+
+			typing.show_cnt--;
+
+
+		}
+	};
+
+	$scope.key_press = function(event){
+
+		var keyCode = typing.keycode(event);
+		$scope.keycode = keyCode;
+
+		if(typing.show_code.indexOf(keyCode) > -1){
+
+			$SPAN = typing.$DIV.find('span').eq(++typing.show_cnt);
+
+			var cursor_cnt = typing.show_cnt + 1;
+			var change_code = $SPAN.text().charCodeAt(0);
+
+			if(change_code==160){
+				change_code = 32;
+			}
+			if(change_code==keyCode){
+				$SPAN.attr('class','green');
+			}
+			else{
+				$SPAN.attr('class','red');
+			}
+
+			typing.$DIV.find('span').eq(cursor_cnt).addClass("cursor");
+
+		}
+		$scope.keytarget = "";
+	}
+
+
+	// 스크립트 ini
+	typing.init();
+
 });
 
 

@@ -23,27 +23,25 @@ superlucky.controller('loginController', function ($scope,$http) {
 
 	// 로그인 이벤트
 	$scope.login_button = function(){
-		var j_data = {
-			id   : $scope.id,
-			pass : $scope.pass
-		};
 		$http({
 			url: '/user/login',
 			method: "POST",
-			data: j_data
+			data: {
+				id   : $scope.id,
+				pass : $scope.pass
+			}
 		}).
 		success(function(data){
 			if(data.result == 'true'){
-				alert('성공');
 				location.replace('/');
 			}
 			else{
-				alert('실패');
+				alert('fail');
 			}
 		}).
 		error(function(data){
+			alert('서버오류 입니다.');
 		});
-
 	}
 });
 </script>
