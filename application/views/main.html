@@ -1,9 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="superlucky" >
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>SUPERLUCKY</title>
+<script src="/asset/js/angular.js"></script>
 </head>
-<body>
-main
+<body ng-controller="typingController" ng-click="focus_setting()">
+<input type="text" id="ng_target" ng-model="keytarget" ng-keydown="key_fun()" ng-blur="key_blur()">
+<input type="text" ng-model="keycode">
+<div  style="border:1px solid green;width:500px;height:500px">
+	{{ typing_contents }}
+</div>
+<script>
+var superlucky = angular.module('superlucky', []);
+superlucky.controller('typingController', function ($scope) {
+
+	$scope.typing_contents = "jj";
+		
+	$scope.keycode = "";
+	$scope.key_fun = function(){
+		$scope.keycode = event.keyCode;
+	}
+	$scope.key_blur = function(){
+		document.getElementById("ng_target").focus();
+	}
+	document.getElementById("ng_target").focus();
+});
+
+
+</script>
 </body>
 </html>

@@ -2,6 +2,14 @@
 
 class View extends CI_Controller {
 
+   public function __construct(){
+		parent::__construct();
+		// 로그인 체크
+		if(!$this->session->userdata('id') && $this->uri->segment(2)!='login'){
+			redirect('/view/login');
+		}
+   }
+
 	public function index(){
 		$this->main();
 	}
@@ -10,6 +18,7 @@ class View extends CI_Controller {
 	 * 로그인 페이지
 	 */
 	public function login(){
+		$this->session->sess_destroy();
 		$this->load->view('login.html');
 	}
 

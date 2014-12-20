@@ -1,13 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="superlucky">
 <head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>SUPERLUCKY</title>
+<script src="/asset/js/angular.js"></script>
 </head>
 <body>
-<center>
-ID <input type="text" name="id" />
-PASS <input type="password" name="pass" />
-<input type="button" value="LOGIN">
-</center>
+
+<div ng-controller="loginController">
+<form method="post" action="" >
+	ID 
+	<input ng-model="id"   name="id"   type="text"  />
+	PASS 
+	<input ng-model="pass" name="pass" type="password"  />
+	<input type="button" value="LOGIN" ng-click="login_button()" />
+</form>
+</div>
+
+<script>
+var superlucky = angular.module('superlucky', []);
+superlucky.controller('loginController', function ($scope,$http) {
+
+	// 로그인 이벤트
+	$scope.login_button = function(){
+		var j_data = {
+			id   : $scope.id,
+			pass : $scope.pass
+		};
+		$http({
+			url: '/user/login',
+			method: "POST",
+			data: j_data
+		}).
+		success(function(data){
+			if(data.result == 'true'){
+				alert('성공');
+				location.replace('/');
+			}
+			else{
+				alert('실패');
+			}
+		}).
+		error(function(data){
+		});
+
+	}
+});
+</script>
 </body>
 </html>
