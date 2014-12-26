@@ -4,6 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>SUPERLUCKY</title>
 <script src="/asset/js/angular.js"></script>
+<link rel="stylesheet" type="text/css" href="/asset/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="/asset/css/bootstrap-theme.css" />
 <link rel="stylesheet" type="text/css" href="/asset/css/typing.css" />
 </head>
 <body ng-controller="typingController" ng-click="focus_setting()">
@@ -20,14 +22,12 @@ var typingIo = angular.module('typingIo', []);
 typingIo.controller('typingController', function ($scope,$http) {
 
 
-
-
 	var typing = {
 		$DIV : angular.element(document.getElementById('typing_area')),
 		record_time : 0,
 		record_play_stat : false,
 		record_interval : null,
-		playinterval : null,
+		play_interval : null,
 		record_history : {},
 		show_cnt : -1,  // process typing cnt
 		word_total : 0, // total word cnt
@@ -46,8 +46,11 @@ typingIo.controller('typingController', function ($scope,$http) {
 		},
 		record_history_write : function(htime,keycode){
 		    if(this.record_play_stat==false){
-				typing.record_history[htime]=keycode;
-				console.log(typing.record_history);
+				if(!typing.record_history[htime]){
+					typing.record_history[htime] = new Array();
+				}
+				typing.record_history[htime].push(keycode);
+				//console.log(typing.record_history);
 			}
 	    },
 		keycode : function(ev){
@@ -67,7 +70,13 @@ typingIo.controller('typingController', function ($scope,$http) {
 
 
 				if(data.result == 'true'){
-					var words_array = data.data.split('');
+					var data_string = data.data;
+					data_string = data_string.replace(/\t/g,"    ");
+					data_string = data_string.replace(/\n\r/g,"\n");
+					data_string = data_string.replace(/\r/g,"\n");
+					data_string = data_string.replace(/[ㄱ-ㅎ가-힣]/g,"");
+
+					var words_array = data_string.split('');
 					for(word in words_array){
 
 						var words_text = words_array[word];
@@ -166,12 +175,12 @@ typingIo.controller('typingController', function ($scope,$http) {
 					typing.$DIV.find('span').eq(cursor_cnt).addClass("cursor");
 				}
 
-				console.log((typing.show_cnt+1)+" / "+typing.word_total);
+				//console.log((typing.show_cnt+1)+" / "+typing.word_total);
 				if(typing.show_cnt+1 == typing.word_total ){
 					if(typing.record_play_stat==false){
 						clearInterval(typing.record_interval);
 					}else{
-						clearInterval(typing.playinterval);
+						clearInterval(typing.play_interval);
 					}
 					alert('Complete');
 				}
@@ -210,16 +219,21 @@ typingIo.controller('typingController', function ($scope,$http) {
 
 		var time_cnt = 0;
 
-		typing.playinterval = setInterval(function(){
+		typing.play_interval = setInterval(function(){
 			if(typing.record_history[time_cnt]){
-				var keyCode = typing.record_history[time_cnt];
-				console.log(keyCode);
-				if(keyCode==8){
-					typing.key_remove(keyCode);
-				}else{
-					console.log('key_fun');
-					typing.key_fun(keyCode);
+				var keyCodeTimeLine = typing.record_history[time_cnt];
+
+				for (arKey in keyCodeTimeLine){
+					var keyCode = keyCodeTimeLine[arKey];
+					//console.log(keyCode);
+					if(keyCode==8){
+						typing.key_remove(keyCode);
+					}else{
+						//console.log('key_fun');
+						typing.key_fun(keyCode);
+					}
 				}
+
 			}
 			time_cnt++;
 		},16);

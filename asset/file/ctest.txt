@@ -1,2 +1,1 @@
-var requirejs, require, define;
-(function (global) {
+(function (console, args, readFileFunc) {
