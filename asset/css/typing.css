@@ -15,3 +15,11 @@
 	background-color:#cdcdcd;
 }
 
+.hidden_box{
+	width:10px;
+	background-color:#222222;
+	color:#222222;
+	border:0px solid #222222;
+	float:right;
+}
+

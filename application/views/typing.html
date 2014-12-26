@@ -1,0 +1,14 @@
+<link rel="stylesheet" type="text/css" href="/asset/css/typing.css" />
+<div>
+	<input type="button" id="timeplay" value="play" ng-click="play($event)">
+	<div id="typing_area">
+	</div>
+
+	<input type="text" id="ng_target" ng-model="keytarget" ng-keypress="key_press($event)" ng-keydown="key_down($event)" ng-blur="key_blur($event)" class="hidden_box">
+	<input type="hidden" ng-model="keycode">
+	<br>
+	<input type="hidden" id="timecnt">
+	<br>
+
+</div>
+

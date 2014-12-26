@@ -6,7 +6,7 @@
 <script src="/asset/js/angular.js"></script>
 <script src="/asset/js/ui_bootstrap.js"></script>
 
-<link rel="stylesheet" type="text/css" href="/asset/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="/asset/css/bootstrap.css" />
 <link rel="stylesheet" type="text/css" href="/asset/css/login.css" />
 </head>
 <body>
@@ -22,11 +22,13 @@
 <div ng-controller="dialogController" style="display:none">
 <script type="text/ng-template" id="myModalContent.html">
 	<div class="modal-header">
-		<h3 class="modal-title">Message</h3>
+		<h3 class="modal-title">Fail Login!</h3>
 	</div>
+	<!--
 	<div class="modal-body">
 		Fail Login!
 	</div>
+	-->
 	<div class="modal-footer">
 		<button class="btn btn-primary" ng-click="ok()">OK</button>
 	</div>
@@ -51,10 +53,6 @@ login.directive('ngEnter', function () {
         });
     };
 });
-
-
-
-
 
 login.controller('loginController', function ($scope,$http,$modal) {
 

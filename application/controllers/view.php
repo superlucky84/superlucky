@@ -29,4 +29,12 @@ class View extends CI_Controller {
 		$this->load->view('main.html');
 	}
 
+
+	/*
+	 * 메인 페이지
+	 */
+	public function typing(){
+		$this->load->view('typing.html');
+	}
+
 }
