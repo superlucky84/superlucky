@@ -8,7 +8,7 @@
 }
 
 .green{
-	color:blue;
+	color:#a600a6;
 }
 
 .cursor{
@@ -23,3 +23,7 @@
 	float:right;
 }
 
+.focus_click{
+	min-height:300px;
+	/*border:1px solid red;*/
+}

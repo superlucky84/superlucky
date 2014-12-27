@@ -1,14 +1,52 @@
-superlucky.controller('typingController', function ($scope,$http) {
+
+
+// 컨트롤러 간 공유
+superlucky.service('typingservice',function(){
+
+	this.dialog_instance = null;
+	this.main_scope = null;
+	this.main_scope_setting = function($scope){
+		this.main_scope = $scope;
+	}
+
+})
+// 다이얼로그 컨트롤러
+.controller('dialogController', function ($scope,$http,$modal,typingservice) {
+
+	// NEXT 클릭
+	$scope.next = function(){
+
+		typingservice.main_scope.page_set(typingservice.main_scope.page_get() + 1);
+		typingservice.main_scope.init();
+
+		typingservice.dialog_instance.dismiss('cancel');
+	};
+
+})
+// 타이핑 앱 컨트롤러
+.controller('typingController', function ($scope,$http,$modal,typingservice) {
+
+	// dialog
+	dialog = function(size){
+		typingservice.dialog_instance = $modal.open({
+			templateUrl: 'dialog_comm',
+			controller: 'dialogController',
+			size: size,
+			resolve: {
+			}
+		});
+	}
 
 	var $navbar = angular.element(document.getElementById('navbar'));
 
 	$navbar.find("li").removeClass('active');
 	angular.element(document.getElementById('typingio')).addClass('active');
 
-	//$navbar.find(document.getElementById("typingio")).addClass('active');
 
 	var typing = {
 		$DIV : angular.element(document.getElementById('typing_area')),
+		page : 1,
+		range_page :20,
 		record_time : 0,
 		record_play_stat : false,
 		record_interval : null,
@@ -50,12 +88,12 @@ superlucky.controller('typingController', function ($scope,$http) {
 		init : function(){
 
 
-			$http({ url: '/typing/prototype', method: "GET", async:false }).
+			$http({ url: '/typing/prototype?page='+typing.page+'&page_range='+typing.range_page, method: "GET", async:false }).
 			success(function(data){
-
 
 				if(data.result == 'true'){
 					var data_string = data.data;
+
 					data_string = data_string.replace(/\t/g,"    ");
 					data_string = data_string.replace(/\n\r/g,"\n");
 					data_string = data_string.replace(/\r/g,"\n");
@@ -167,13 +205,17 @@ superlucky.controller('typingController', function ($scope,$http) {
 					}else{
 						clearInterval(typing.play_interval);
 					}
-					alert('Complete');
+					dialog("sm");
 				}
 
 			}
 			$scope.keytarget = "";
 	    }
 	}
+
+	$scope.focus_cursor = function(){
+		document.getElementById("ng_target").focus();
+	};
 
 	$scope.key_blur = function(){
 		document.getElementById("ng_target").focus();
@@ -227,7 +269,20 @@ superlucky.controller('typingController', function ($scope,$http) {
 
 	}
 
-	// Script init
-	typing.init();
+	$scope.init = function(page){
+		typing.init(page);
+	}
+	$scope.page_set = function(page){
+		typing.page = page;
+	}
+	$scope.page_get = function(){
+		return typing.page;
+	}
+
+	// 서비스에 스코프 전달
+	typingservice.main_scope_setting($scope);
+
+	// 타이핑 앱 1페이지로 실행
+	typing.init(1);
 
 });

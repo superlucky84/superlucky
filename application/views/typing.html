@@ -1,14 +1,25 @@
 <link rel="stylesheet" type="text/css" href="/asset/css/typing.css" />
-<div>
-	<input type="button" id="timeplay" value="play" ng-click="play($event)">
+<input type="button" id="timeplay" value="play" ng-click="play($event)">
+<input type="text" id="ng_target" ng-model="keytarget" ng-keypress="key_press($event)" ng-keydown="key_down($event)" ng-blur="key_blur($event)" >
+
+<input type="text" ng-model="keycode">
+<input type="text" id="timecnt">
+<div ng-click="focus_cursor()" class="focus_click" >
 	<div id="typing_area">
 	</div>
+</div>
 
-	<input type="text" id="ng_target" ng-model="keytarget" ng-keypress="key_press($event)" ng-keydown="key_down($event)" ng-blur="key_blur($event)" class="hidden_box">
-	<input type="hidden" ng-model="keycode">
-	<br>
-	<input type="hidden" id="timecnt">
-	<br>
-
+<div ng-controller="dialogController" style="display:none">
+<script type="text/ng-template" id="dialog_comm">
+	<div class="modal-header">
+		<h3 class="modal-title">OK!</h3>
+	</div>
+	<div class="modal-body">
+		OK!
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="next()">NEXT</button>
+	</div>
+</script>
 </div>
 
