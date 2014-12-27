@@ -1,14 +1,17 @@
 .init{
 	color:#737373;
+	line-height:20px;
 }
 
 .red{
 	color:#ffffff;
 	background-color:red;
+	line-height:20px;
 }
 
 .green{
 	color:#a600a6;
+	line-height:20px;
 }
 
 .cursor{
