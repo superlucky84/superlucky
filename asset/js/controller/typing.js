@@ -13,18 +13,28 @@ superlucky.service('typingservice',function(){
 // 다이얼로그 컨트롤러
 .controller('dialogController', function ($scope,$http,$modal,typingservice) {
 
-	// NEXT 클릭
-	$scope.next = function(){
-
-		typingservice.main_scope.page_set(typingservice.main_scope.page_get() + 1);
-		typingservice.main_scope.init();
-
+	// STOP 클릭
+	$scope.close = function(){
 		typingservice.dialog_instance.dismiss('cancel');
 	};
+
+	// NEXT 클릭
+	$scope.next = function(){
+		typingservice.main_scope.next();
+		typingservice.dialog_instance.dismiss('cancel');
+	};
+
+	// 타이핑 소요시간
+	$scope.record_time  = (Math.round(typingservice.main_scope.record_time/60*100))/100;
+	// 타이핑 유효 수
+	$scope.active_count = typingservice.main_scope.active_count;
+	// CPM (분당 타이핑수)
+	$scope.cpm = Math.round((60 * $scope.active_count) / $scope.record_time);
 
 })
 // 타이핑 앱 컨트롤러
 .controller('typingController', function ($scope,$http,$modal,typingservice) {
+
 
 	// dialog
 	dialog = function(size){
@@ -32,6 +42,7 @@ superlucky.service('typingservice',function(){
 			templateUrl: 'dialog_comm',
 			controller: 'dialogController',
 			size: size,
+			backdrop : false,
 			resolve: {
 			}
 		});
@@ -45,8 +56,9 @@ superlucky.service('typingservice',function(){
 
 	var typing = {
 		$DIV : angular.element(document.getElementById('typing_area')),
+		$TIME : angular.element(document.getElementById('timecnt')),
 		page : 1,
-		range_page :20,
+		range_page :15,
 		record_time : 0,
 		record_play_stat : false,
 		record_interval : null,
@@ -56,14 +68,11 @@ superlucky.service('typingservice',function(){
 		word_total : 0, // total word cnt
 		show_code : [13,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,186,187,188,189,190,191,192,219,220,221,222],
 
-		record_time : 0,
 		record_history : {},
 		record_init : function(){
-			var $timecnt = angular.element(document.getElementById('timecnt'));
 			typing.record_interval = setInterval(function(){
 				typing.record_time++;
-				//console.log(this.record_time);
-				$timecnt.val(typing.record_time);
+				typing.$TIME.html(typing.record_time);
 			},16);
 
 		},
@@ -100,13 +109,39 @@ superlucky.service('typingservice',function(){
 					data_string = data_string.replace(/[ㄱ-ㅎ가-힣]/g,"");
 
 					var words_array = data_string.split('');
+
+
+					clearInterval(typing.record_interval);
+					clearInterval(typing.play_interval);
+
+					typing.word_total = 0;
+					typing.record_time = 0;
+					typing.show_cnt = -1;
+					typing.show_init_cnt = -1;
+					typing.record_play_stat = false;
+					typing.record_time = 0;
+					typing.record_history = {};
+					typing.$TIME.html('0');
+					typing.$DIV.html('');
+					typing.$DIV.hide();
+					$scope.complate = false;
+					$scope.keycode = 0;
+
+					var space_jump = true;
 					for(word in words_array){
 
 						var words_text = words_array[word];
 
 						if(words_text == " "){
+							if(space_jump){
+								typing.show_cnt++;
+							}
 							words_text = "&nbsp;";
+						}else if(space_jump){
+							typing.show_init_cnt = typing.show_cnt;
+							space_jump = false;
 						}
+
 						if(words_text == "\n"){
 							words_text = "↵";
 						}
@@ -126,6 +161,11 @@ superlucky.service('typingservice',function(){
 						typing.word_total++;
 
 					}
+
+					typing.$DIV.show('slow');
+					typing.$DIV.find('span').eq(0).removeClass("cursor");
+					typing.$DIV.find('span').eq(typing.show_cnt+1).addClass("cursor");
+
 				}
 				else{
 					alert('fail');
@@ -155,14 +195,13 @@ superlucky.service('typingservice',function(){
 			if(typing.show_code.indexOf(keyCode) > -1){
 
 				if(typing.record_play_stat==false){
-					if(typing.show_cnt == -1){
+					if(typing.show_cnt == typing.show_init_cnt){
 						this.record_init();
 					}
 					typing.record_history_write(this.record_time,keyCode);
 				}
 
 				$scope.keycode = keyCode;
-
 				$SPAN = typing.$DIV.find('span').eq(++typing.show_cnt);
 
 				var cursor_cnt = typing.show_cnt + 1;
@@ -206,6 +245,9 @@ superlucky.service('typingservice',function(){
 						clearInterval(typing.play_interval);
 					}
 					dialog("sm");
+					$scope.record_time  = typing.record_time;
+					$scope.active_count = typing.word_total;
+					$scope.complate = true;
 				}
 
 			}
@@ -223,18 +265,24 @@ superlucky.service('typingservice',function(){
 	document.getElementById("ng_target").focus();
 
 	$scope.key_down = function(event){
-		var keyCode = typing.keycode(event);
-		typing.key_remove(keyCode);
+		if(typing.record_play_stat==false){
+			var keyCode = typing.keycode(event);
+			typing.key_remove(keyCode);
+		}
 	};
 
 	$scope.key_press = function(event){
-		var keyCode = typing.keycode(event);
-		typing.key_fun(keyCode);
+		if(typing.record_play_stat==false){
+			var keyCode = typing.keycode(event);
+			typing.key_fun(keyCode);
+		}
 	}
 
 	$scope.play = function(event){
 
-		typing.show_cnt = -1;
+		//typing.show_cnt = -1;
+		typing.show_cnt = typing.show_init_cnt;
+
 		typing.record_play_stat = true;
 
 		$SPAN = typing.$DIV.find('span');
@@ -242,7 +290,6 @@ superlucky.service('typingservice',function(){
 		$SPAN.removeClass('green');
 		$SPAN.removeClass('init');
 		$SPAN.addClass('init');
-		$SPAN.eq(0).addClass('cursor');
 
 		var time_cnt = 0;
 
@@ -269,15 +316,16 @@ superlucky.service('typingservice',function(){
 
 	}
 
-	$scope.init = function(page){
-		typing.init(page);
-	}
-	$scope.page_set = function(page){
-		typing.page = page;
-	}
-	$scope.page_get = function(){
-		return typing.page;
-	}
+	$scope.next = function(){
+		$scope.focus_cursor();
+		typing.page++;
+		typing.init();
+	};
+	$scope.restart = function(){
+		$scope.focus_cursor();
+		typing.init();
+	};
+
 
 	// 서비스에 스코프 전달
 	typingservice.main_scope_setting($scope);

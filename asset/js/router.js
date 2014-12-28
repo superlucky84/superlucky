@@ -10,6 +10,6 @@ function($routeProvider) {
         controller: 'logoutController'
       }).
       otherwise({
-        redirectTo: ''
+        redirectTo: '/typingio'
       });
 }]);

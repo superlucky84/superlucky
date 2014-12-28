@@ -1,23 +1,43 @@
 <link rel="stylesheet" type="text/css" href="/asset/css/typing.css" />
-<input type="button" id="timeplay" value="play" ng-click="play($event)">
-<input type="text" id="ng_target" ng-model="keytarget" ng-keypress="key_press($event)" ng-keydown="key_down($event)" ng-blur="key_blur($event)" >
 
-<input type="text" ng-model="keycode">
-<input type="text" id="timecnt">
+<br>
+
+<!-- NAVI -->
+<button type="button" class="btn btn-xs btn-primary" ng-show="complate"  ng-click="play($event)">Play</button>
+<button type="button" class="btn btn-xs btn-primary"  ng-click="next($event)">Next</button>
+<button type="button" class="btn btn-xs btn-primary"  ng-click="restart($event)">Restart</button>
+
+<input type="text" id="ng_target" ng-model="keytarget" ng-keypress="key_press($event)" ng-keydown="key_down($event)" ng-blur="key_blur($event)" class="hidden_box">
+<!--input type="text" ng-model="keycode"-->
+<!--input type="text" id="timecnt"-->
+<span>&nbsp;</span>
+<span>&nbsp;</span>
+<span>Time : <span id='timecnt'></span></span>
+<span>&nbsp;</span>
+<span>KeyCode : {{ keycode }}</span>
+
+<br>
+<br>
+
+<!-- TYPING AREA -->
 <div ng-click="focus_cursor()" class="focus_click" >
 	<div id="typing_area">
 	</div>
 </div>
 
+<!-- DIALOG -->
 <div ng-controller="dialogController" style="display:none">
 <script type="text/ng-template" id="dialog_comm">
 	<div class="modal-header">
-		<h3 class="modal-title">OK!</h3>
+		<h3 class="modal-title">RESULT</h3>
 	</div>
 	<div class="modal-body">
-		OK!
+		<p>spend_time : {{ record_time }} second</p>
+		<p>active_count : {{ active_count }} character</p>
+		<p>character per minute : {{ cpm }} cpm</p>
 	</div>
 	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="close()">CLOSE</button>
 		<button class="btn btn-primary" ng-click="next()">NEXT</button>
 	</div>
 </script>

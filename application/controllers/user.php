@@ -26,4 +26,45 @@ class User extends CI_Controller {
 	public function logout(){
 		$this->session->sess_destroy();
 	}
+
+	public function signup(){
+		$data = json_decode(file_get_contents('php://input'),true);
+
+		if( !isset($data['id']) || !trim($data['id'])){
+			echo json_encode(array(
+				'result' => 'false',
+				'msg'    => 'id_none'
+			));
+			exit;
+		}else{
+			$id = $data['id'];
+		}
+		if( !isset($data['pass']) || !trim($data['pass'])){
+			echo json_encode(array(
+				'result' => 'false',
+				'msg'    => 'pass_none'
+			));
+			exit;
+		}else{
+			$pass = $data['pass'];
+		}
+
+		$this->load->model('user_model','',TRUE);
+
+		// 있는 아이디 인지 체크
+		if($this->user_model->chk_id($id)){
+			echo json_encode(array(
+				'result' => 'false',
+				'msg'    => 'exists_id'
+			));
+			exit;
+		}
+
+		$pass = md5($pass);
+		$result = $this->user_model->signup($id,$pass);
+
+		echo json_encode(array(
+			'result' => ($result)?'true':'false'
+		));
+	}
 }

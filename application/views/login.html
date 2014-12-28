@@ -12,93 +12,42 @@
 <body>
 
 <div ng-controller="loginController" class="container">
-<form method="post" action="" class="form-signin" >
-	<h2 class="form-signin-heading">LOGIN</h2>
-	<input ng-model="id"   name="id"   type="text"     class="form-control" placeholder="Id" autofocus />
-	<input ng-model="pass" ng-enter="login_button()"  name="pass" type="password" class="form-control" placeholder="Pass" />
-	<button ng-click="login_button()" class="btn btn-lg btn-primary btn-block" type="button">LOGIN</button>
-</form>
-</div>
+	<form method="post" action="" class="form-signin" >
+		<span style="font-size:77px">LOGIN</span>
+		<button type="button" ng-click="signup($event)" class="btn btn-xs btn-danger">SignUp</button>
+		<input ng-model="id"   name="id"   type="text"     class="form-control" placeholder="Id" autofocus />
+		<input ng-model="pass" ng-enter="login_button()"  name="pass" type="password" class="form-control" placeholder="Pass" />
+		<button ng-click="login_button()" class="btn btn-lg btn-primary btn-block" type="button">LOGIN</button>
+	</form>
+	</div>
 
-<div ng-controller="dialogController" style="display:none">
-<script type="text/ng-template" id="myModalContent.html">
-	<div class="modal-header">
-		<h3 class="modal-title">Fail Login!</h3>
-	</div>
-	<!--
-	<div class="modal-body">
-		Fail Login!
-	</div>
-	-->
-	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="ok()">OK</button>
-	</div>
-</script>
+	<div ng-controller="dialogController" style="display:none">
+	<script type="text/ng-template" id="myModalContent.html">
+		<div class="modal-header">
+			<h3 class="modal-title">{{ alert_msg }}</h3>
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" ng-click="ok()">OK</button>
+		</div>
+	</script>
+	<script type="text/ng-template" id="signin.html">
+		<div class="modal-body">
+			<label class="col-sm-10 control-label" >Id</label>
+			<input class="form-control" type="text" id="sign_id" ng-model="id" placeholder="Id">
+			<br>
+			<label class="col-sm-10 control-label" >Pass</label>
+			<input class="form-control" type="password" id="sign_pass" ng-model="pass" placeholder="Pass">
+		</div>
+		<div class="modal-footer">
+			<button class="btn btn-primary" ng-click="regist()">Regist</button>
+			<button class="btn btn-primary" ng-click="ok()">Cancel</button>
+		</div>
+	</script>
 </div>
 
 <script>
 var login = angular.module('login', ['ui.bootstrap']);
-login.dialog_instance = null;
-
-// enter Event
-login.directive('ngEnter', function () {
-    return function (scope, element, attrs) {
-        element.bind("keydown keypress", function (event) {
-            if(event.which === 13) {
-                scope.$apply(function (){
-                    scope.$eval(attrs.ngEnter);
-                });
-                event.preventDefault();
-            }
-        });
-    };
-});
-
-login.controller('loginController', function ($scope,$http,$modal) {
-
-	var open = function (size) {
-		login.dialog_instance = $modal.open({
-			templateUrl: 'myModalContent.html',
-			controller: 'dialogController',
-			size: size,
-			resolve: {}
-		});
-	};
-
-
-
-	// Login Event
-	$scope.login_button = function(){
-		$http({
-			url: '/user/login',
-			method: "POST",
-			data: {
-				id   : $scope.id,
-				pass : $scope.pass
-			}
-		}).
-		success(function(data){
-			if(data.result == 'true'){
-				location.replace('/');
-			}
-			else{
-				//alert('fail');
-				open('sm');
-			}
-		}).
-		error(function(data){
-			alert('서버오류 입니다.');
-		});
-	}
-});
-
-
-login.controller('dialogController', function ($scope) {
-	$scope.ok = function(){
-		login.dialog_instance.dismiss('cancel');
-	};
-});
-
 </script>
+<script src="/asset/js/controller/login.js"></script>
 </body>
 </html>
