@@ -23,6 +23,10 @@ superlucky.service('boardservice',function(){
 // 게시판 앱 컨트롤러
 .controller('boardController', function ($scope,$http,$modal,typingservice) {
 
+	var $navbar = angular.element(document.getElementById('navbar'));
+	$navbar.find("li").removeClass('active');
+	angular.element(document.getElementById('board')).addClass('active');
+
 
 	// dialog
 	dialog = function(size){

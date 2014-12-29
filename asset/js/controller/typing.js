@@ -55,7 +55,6 @@ superlucky.service('typingservice',function(){
 	}
 
 	var $navbar = angular.element(document.getElementById('navbar'));
-
 	$navbar.find("li").removeClass('active');
 	angular.element(document.getElementById('typingio')).addClass('active');
 
