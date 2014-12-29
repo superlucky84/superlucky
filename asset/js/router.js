@@ -5,6 +5,10 @@ function($routeProvider) {
         templateUrl: 'view/typing',
         controller: 'typingController'
       }).
+      when('/board', {
+        templateUrl: 'view/board',
+        controller: 'boardController'
+      }).
       when('/logout', {
         templateUrl: 'user/logout',
         controller: 'logoutController'

@@ -31,10 +31,17 @@ class View extends CI_Controller {
 
 
 	/*
-	 * 메인 페이지
+	 * 타이핑 페이지
 	 */
 	public function typing(){
 		$this->load->view('typing.html');
+	}
+
+	/*
+	 * 게시판 페이지
+	 */
+	public function board(){
+		$this->load->view('board.html');
 	}
 
 }

@@ -1,0 +1,79 @@
+<!--link rel="stylesheet" type="text/css" href="/asset/css/typing.css" /-->
+
+<!-- Board AREA -->
+<div class>
+	<table class="table table-striped">
+		<colgroup>
+			<col width="5%">
+			<col width="*">
+			<col width="20%">
+		</colgroup>
+		<thead>
+		<tr>
+			<th>NO.</th>
+			<th>SUBJECT.</th>
+			<th>DATE.</th>
+		</tr>
+		</thead>
+		<body>
+		<tr>
+			<td>5</td>
+			<td>b</td>
+			<td>c</td>
+		</tr>
+		<tr>
+			<td>4</td>
+			<td>b</td>
+			<td>c</td>
+		</tr>
+		<tr>
+			<td>3</td>
+			<td>b</td>
+			<td>c</td>
+		</tr>
+		<tr>
+			<td>2</td>
+			<td>b</td>
+			<td>c</td>
+		</tr>
+		<tr>
+			<td>1</td>
+			<td>b</td>
+			<td>c</td>
+		</tr>
+		</body>
+
+	</table>
+</div>
+
+<div style="text-align:center;">
+	<ul class="pagination pagination-sm">
+		<li class="disabled"><a href="#">«</a></li>
+		<li class="active"><a href="#">1</a></li>
+		<li><a href="#">2</a></li>
+		<li><a href="#">3</a></li>
+		<li><a href="#">4</a></li>
+		<li><a href="#">5</a></li>
+		<li><a href="#">»</a></li>
+	</ul>
+<div>
+
+<!-- DIALOG -->
+<div ng-controller="dialogController" style="display:none">
+<script type="text/ng-template" id="dialog_comm">
+	<div class="modal-header">
+		<h3 class="modal-title">RESULT</h3>
+	</div>
+	<div class="modal-body">
+		<p>spend_time : {{ record_time }} second</p>
+		<p>active_count : {{ active_count }} character</p>
+		<p>character per minute : {{ cpm }} cpm</p>
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="play()">REPLAY</button>
+		<button class="btn btn-primary" ng-click="next()">NEXT</button>
+		<button class="btn btn-primary" ng-click="close()">CLOSE</button>
+	</div>
+</script>
+</div>
+
