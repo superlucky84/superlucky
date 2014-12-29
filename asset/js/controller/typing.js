@@ -24,6 +24,12 @@ superlucky.service('typingservice',function(){
 		typingservice.dialog_instance.dismiss('cancel');
 	};
 
+	// PLAY 클릭
+	$scope.play = function(){
+		typingservice.main_scope.play();
+		typingservice.dialog_instance.dismiss('cancel');
+	};
+
 	// 타이핑 소요시간
 	$scope.record_time  = (Math.round(typingservice.main_scope.record_time/60*100))/100;
 	// 타이핑 유효 수
@@ -58,7 +64,7 @@ superlucky.service('typingservice',function(){
 		$DIV : angular.element(document.getElementById('typing_area')),
 		$TIME : angular.element(document.getElementById('timecnt')),
 		page : 1,
-		range_page :15,
+		range_page :10,
 		record_time : 0,
 		record_play_stat : false,
 		record_interval : null,

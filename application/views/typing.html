@@ -3,7 +3,7 @@
 <br>
 
 <!-- NAVI -->
-<button type="button" class="btn btn-xs btn-primary" ng-show="complate"  ng-click="play($event)">Play</button>
+<button type="button" class="btn btn-xs btn-primary" ng-show="complate"  ng-click="play($event)">RePlay</button>
 <button type="button" class="btn btn-xs btn-primary"  ng-click="next($event)">Next</button>
 <button type="button" class="btn btn-xs btn-primary"  ng-click="restart($event)">Restart</button>
 
@@ -37,8 +37,9 @@
 		<p>character per minute : {{ cpm }} cpm</p>
 	</div>
 	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="close()">CLOSE</button>
+		<button class="btn btn-primary" ng-click="play()">REPLAY</button>
 		<button class="btn btn-primary" ng-click="next()">NEXT</button>
+		<button class="btn btn-primary" ng-click="close()">CLOSE</button>
 	</div>
 </script>
 </div>

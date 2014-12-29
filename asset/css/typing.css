@@ -1,17 +1,20 @@
 .init{
 	color:#737373;
 	line-height:20px;
+	font-family:courier New,courier;
 }
 
 .red{
 	color:#ffffff;
 	background-color:red;
 	line-height:20px;
+	font-family:courier New,courier;
 }
 
 .green{
 	color:#a600a6;
 	line-height:20px;
+	font-family:courier New,courier;
 }
 
 .cursor{
