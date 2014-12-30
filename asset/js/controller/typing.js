@@ -63,7 +63,7 @@ superlucky.service('typingservice',function(){
 		$DIV : angular.element(document.getElementById('typing_area')),
 		$TIME : angular.element(document.getElementById('timecnt')),
 		page : 1,
-		range_page :10,
+		range_page :1,
 		record_time : 0,
 		record_play_stat : false,
 		record_interval : null,
@@ -253,6 +253,8 @@ superlucky.service('typingservice',function(){
 					$scope.record_time  = typing.record_time;
 					$scope.active_count = typing.word_total;
 					$scope.complate = true;
+					$scope.replay_btn = false;
+
 				}
 
 			}
@@ -289,6 +291,7 @@ superlucky.service('typingservice',function(){
 		typing.show_cnt = typing.show_init_cnt;
 
 		typing.record_play_stat = true;
+		$scope.replay_btn = true;
 
 		$SPAN = typing.$DIV.find('span');
 		$SPAN.removeClass('red');
