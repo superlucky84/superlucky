@@ -1,17 +1,25 @@
-/*
- * 유저 테이블
- */
-CREATE TABLE users ( 
-	user_seq int(11) NOT NULL auto_increment,
-	id varchar(30) NOT NULL,
-	pass varchar(50) NOT NULL,
-	regdate datetime NOT NULL,
-	logindate datetime NOT NULL,
-	title varchar(200) NOT NULL default '',
-	PRIMARY KEY (user_seq),
-	UNIQUE KEY ix_id(id)
-)ENGINE=InnoDB;
 
+CREATE TABLE `users` (
+  `user_seq` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(30) NOT NULL,
+  `pass` varchar(50) NOT NULL,
+  `regdate` datetime NOT NULL,
+  `logindate` datetime NOT NULL,
+  `title` varchar(200) NOT NULL DEFAULT '',
+  PRIMARY KEY (`user_seq`),
+  UNIQUE KEY `ix_id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 
-
+CREATE TABLE `board` (
+  `board_seq` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(30) NOT NULL,
+  `category` varchar(20) NOT NULL,
+  `subject` varchar(200) NOT NULL DEFAULT '',
+  `contents` text NOT NULL DEFAULT '',
+  `regdate` datetime NOT NULL,
+  `moddate` datetime NOT NULL,
+  PRIMARY KEY (`board_seq`),
+  KEY `ix_board_category` (`category`),
+  KEY `ix_board_regdate` (`regdate`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 

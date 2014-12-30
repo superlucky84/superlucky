@@ -16,6 +16,37 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `board`
+--
+
+DROP TABLE IF EXISTS `board`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `board` (
+  `board_seq` int(11) NOT NULL AUTO_INCREMENT,
+  `id` varchar(30) NOT NULL,
+  `category` varchar(20) NOT NULL,
+  `subject` varchar(200) NOT NULL DEFAULT '',
+  `contents` text NOT NULL,
+  `regdate` datetime NOT NULL,
+  `moddate` datetime NOT NULL,
+  PRIMARY KEY (`board_seq`),
+  KEY `ix_board_category` (`category`),
+  KEY `ix_board_regdate` (`regdate`)
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `board`
+--
+
+LOCK TABLES `board` WRITE;
+/*!40000 ALTER TABLE `board` DISABLE KEYS */;
+INSERT INTO `board` VALUES (14,'superlucky','editor','제목','내용','2014-12-31 00:00:00','0000-00-00 00:00:00');
+/*!40000 ALTER TABLE `board` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -31,7 +62,7 @@ CREATE TABLE `users` (
   `title` varchar(200) NOT NULL DEFAULT '',
   PRIMARY KEY (`user_seq`),
   UNIQUE KEY `ix_id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +71,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'superlucky','0cc175b9c0f1b6a831c399e269772661','2014-12-01 00:00:00','2014-12-01 00:00:00','jinwoo');
+INSERT INTO `users` VALUES (14,'superlucky','0cc175b9c0f1b6a831c399e269772661','2014-12-31 00:03:46','2014-12-31 00:03:46','superlucky');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -53,4 +84,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2014-11-30 23:11:39
+-- Dump completed on 2014-12-31  0:04:29

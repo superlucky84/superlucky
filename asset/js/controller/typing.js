@@ -63,7 +63,7 @@ superlucky.service('typingservice',function(){
 		$DIV : angular.element(document.getElementById('typing_area')),
 		$TIME : angular.element(document.getElementById('timecnt')),
 		page : 1,
-		range_page :1,
+		range_page :10,
 		record_time : 0,
 		record_play_stat : false,
 		record_interval : null,
