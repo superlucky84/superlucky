@@ -43,6 +43,7 @@ CREATE TABLE `board` (
 LOCK TABLES `board` WRITE;
 /*!40000 ALTER TABLE `board` DISABLE KEYS */;
 INSERT INTO `board` VALUES (14,'superlucky','editor','제목','내용','2014-12-31 00:00:00','0000-00-00 00:00:00');
+INSERT INTO `board` VALUES (15,'superlucky','linux','제목2','내용2','2014-12-31 00:00:00','0000-00-00 00:00:00');
 /*!40000 ALTER TABLE `board` ENABLE KEYS */;
 UNLOCK TABLES;
 

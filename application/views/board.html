@@ -16,30 +16,10 @@
 		</tr>
 		</thead>
 		<body>
-		<tr>
-			<td>5</td>
-			<td>b</td>
-			<td>c</td>
-		</tr>
-		<tr>
-			<td>4</td>
-			<td>b</td>
-			<td>c</td>
-		</tr>
-		<tr>
-			<td>3</td>
-			<td>b</td>
-			<td>c</td>
-		</tr>
-		<tr>
-			<td>2</td>
-			<td>b</td>
-			<td>c</td>
-		</tr>
-		<tr>
-			<td>1</td>
-			<td>b</td>
-			<td>c</td>
+		<tr ng-repeat="list in lists">
+			<td>{{ list.no }}</td>
+			<td>{{ list.subject }}</td>
+			<td>{{ list.regdate }}</td>
 		</tr>
 		</body>
 
@@ -59,7 +39,7 @@
 <div>
 
 <!-- DIALOG -->
-<div ng-controller="dialogController" style="display:none">
+<div ng-controller="boardDialogController" style="display:none">
 <script type="text/ng-template" id="dialog_comm">
 	<div class="modal-header">
 		<h3 class="modal-title">RESULT</h3>

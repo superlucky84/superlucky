@@ -11,7 +11,7 @@ superlucky.service('boardservice',function(){
 
 })
 // 다이얼로그 컨트롤러
-.controller('boaardDialogController', function ($scope,$http,$modal,typingservice) {
+.controller('boardDialogController', function ($scope,$http,$modal,boardservice) {
 
 	// STOP 클릭
 	$scope.close = function(){
@@ -21,18 +21,39 @@ superlucky.service('boardservice',function(){
 
 })
 // 게시판 앱 컨트롤러
-.controller('boardController', function ($scope,$http,$modal,typingservice) {
+.controller('boardController', function ($scope,$http,$modal,boardservice) {
 
+	// category nabi
 	var $navbar = angular.element(document.getElementById('navbar'));
 	$navbar.find("li").removeClass('active');
 	angular.element(document.getElementById('board')).addClass('active');
+
+
+	var board = {
+		page : 1,
+		lists : function(){
+			$http({ url: '/board/lists?page='+board.page, method: "GET", async:false }).
+			success(function(data){
+				console.log(data);
+				if(data.result=='true'){
+					$scope.lists = data.data;
+					console.log($scope.lists);
+				}
+			}).
+			error(function(data){
+				alert('SERVER ERROR');
+			});
+		}
+	};
+
+	board.lists();
 
 
 	// dialog
 	dialog = function(size){
 		typingservice.dialog_instance = $modal.open({
 			templateUrl: 'dialog_comm',
-			controller: 'boaardDialogController',
+			controller: 'boardDialogController',
 			size: size,
 			backdrop : false,
 			resolve: {

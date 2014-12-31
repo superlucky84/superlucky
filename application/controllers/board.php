@@ -3,10 +3,27 @@
 class Board extends CI_Controller {
 	public function lists(){
 		$page = $this->input->get('page');
+		$page_range = 10;
 
 		$this->load->model('board_model','',TRUE);
-		$result = $this->board_model->lists($page);
-		echo "<pre>"; print_r($result); "</pre>";
+		$data = $this->board_model->lists($page);
+
+		$total = 2;
+		$noseq = $total - ($page_range * ($page-1));
+
+		foreach($data as $key => $value){
+			$data[$key]['no'] = $noseq--;
+			$data[$key]['regdate'] = substr($value['regdate'],0,16);
+			$data[$key]['moddate'] = substr($value['moddate'],0,16);
+		}
+
+
+
+		echo json_encode(array(
+			'result' => 'true',
+			'data'   => $data
+		));
+
 
 	}
 	/*
