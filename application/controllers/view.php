@@ -26,7 +26,10 @@ class View extends CI_Controller {
 	 * 메인 페이지
 	 */
 	public function main(){
-		$this->load->view('main.html');
+
+		$this->load->view('main.html',array(
+			'user_id' => $this->session->userdata('id')
+		));
 	}
 
 

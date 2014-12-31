@@ -21,23 +21,22 @@ superlucky.service('boardservice',function(){
 
 })
 // 게시판 앱 컨트롤러
-.controller('boardController', function ($scope,$http,$modal,boardservice) {
+.controller('boardController', function ($scope,$http,$modal,$routeParams,boardservice) {
 
 	// category nabi
 	var $navbar = angular.element(document.getElementById('navbar'));
 	$navbar.find("li").removeClass('active');
 	angular.element(document.getElementById('board')).addClass('active');
 
+	
 
 	var board = {
 		page : 1,
 		lists : function(){
-			$http({ url: '/board/lists?page='+board.page, method: "GET", async:false }).
+			$http({ url: '/board/lists?user_id='+$routeParams.user_id+'&page='+board.page, method: "GET", async:false }).
 			success(function(data){
-				console.log(data);
 				if(data.result=='true'){
 					$scope.lists = data.data;
-					console.log($scope.lists);
 				}
 			}).
 			error(function(data){

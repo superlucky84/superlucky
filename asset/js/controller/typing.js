@@ -127,8 +127,11 @@ superlucky.service('typingservice',function(){
 					typing.record_time = 0;
 					typing.record_history = {};
 					typing.$TIME.html('0');
+
+
 					typing.$DIV.html('');
 					typing.$DIV.hide();
+
 					$scope.complate = false;
 					$scope.keycode = 0;
 
@@ -158,6 +161,7 @@ superlucky.service('typingservice',function(){
 
 						var $SPAN = angular.element("<span class='"+class_t+"'>"+words_text+"</span>");
 						typing.$DIV.append($SPAN);
+						//$SPAN.addClass('ng-ani-enter');
 
 						if(words_text == "↵"){
 							typing.$DIV.append("<br>");

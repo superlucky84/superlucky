@@ -2,26 +2,21 @@
 
 class Board extends CI_Controller {
 	public function lists(){
+
+		$user_id = $this->input->get('user_id');
 		$page = $this->input->get('page');
-		$page_range = 10;
 
 		$this->load->model('board_model','',TRUE);
-		$data = $this->board_model->lists($page);
 
-		$total = 2;
-		$noseq = $total - ($page_range * ($page-1));
+		$data = $this->board_model->lists($user_id,$page,10);
 
-		foreach($data as $key => $value){
-			$data[$key]['no'] = $noseq--;
-			$data[$key]['regdate'] = substr($value['regdate'],0,16);
-			$data[$key]['moddate'] = substr($value['moddate'],0,16);
-		}
+		//echo "<pre>"; print_r($data); "</pre>";
 
 
 
 		echo json_encode(array(
 			'result' => 'true',
-			'data'   => $data
+			'data'   => $data["items"]
 		));
 
 

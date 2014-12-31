@@ -1,11 +1,11 @@
 superlucky.config(['$routeProvider',
 function($routeProvider) {
     $routeProvider.
-      when('/typingio', {
+      when('/:user_id/typingio', {
         templateUrl: 'view/typing',
         controller: 'typingController'
       }).
-      when('/board', {
+      when('/:user_id/board', {
         templateUrl: 'view/board',
         controller: 'boardController'
       }).
@@ -14,6 +14,6 @@ function($routeProvider) {
         controller: 'logoutController'
       }).
       otherwise({
-        redirectTo: '/typingio'
+        redirectTo: '/'+superlucky.user_id+'/typingio'
       });
 }]);
