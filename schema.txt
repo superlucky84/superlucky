@@ -12,7 +12,8 @@ CREATE TABLE `users` (
 
 CREATE TABLE `board` (
   `board_seq` int(11) NOT NULL AUTO_INCREMENT,
-  `id` varchar(30) NOT NULL,
+  `user_seq` int(11) NOT NULL,
+  `write_user_seq` int(11) NOT NULL,
   `category` varchar(20) NOT NULL,
   `subject` varchar(200) NOT NULL DEFAULT '',
   `contents` text NOT NULL DEFAULT '',

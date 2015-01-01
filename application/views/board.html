@@ -6,26 +6,14 @@
 		<li class="write">
 			<a class="pointer" ng-click="write_dialog()">write</a>
 		</li>
-		<li class="disabled">
-			<a href="#">«</a>
+		<li class="{{ paging_prev }}">
+			<a class="pointer" ng-click="list($event)" data-page="pprev">«</a>
 		</li>
-		<li class="active">
-			<a href="#">1</a>
+		<li ng-repeat="paging in pagings" class="{{ paging.class_n }}">
+			<a class="pointer" ng-click="list($event)" data-page="{{ paging.i }}">{{ paging.i }}</a>
 		</li>
-		<li>
-			<a href="#">2</a>
-		</li>
-		<li>
-			<a href="#">3</a>
-		</li>
-		<li>
-			<a href="#">4</a>
-		</li>
-		<li>
-			<a href="#">5</a>
-		</li>
-		<li>
-			<a href="#">»</a>
+		<li class="{{ paging_next }}">
+			<a class="pointer" ng-click="list($event)" data-page="nnext">»</a>
 		</li>
 	</ul>
 <div>
@@ -46,11 +34,17 @@
 		</tr>
 		</thead>
 		<body>
-		<tr ng-repeat="list in lists">
+
+		<tr ng-hide="none_hide">
+			<td colspan="3">DATA NONE.</td>
+		</tr>
+
+		<tr ng-repeat="list in lists" ng-hide="list_hide"  class="ng-ani-enter">
 			<td>{{ list.no }}</td>
 			<td>{{ list.subject }}</td>
 			<td>{{ list.regdate }}</td>
 		</tr>
+
 		</body>
 
 	</table>
@@ -76,12 +70,12 @@
 				&nbsp;
 			    <input type="radio" name="category_ui" value="text">NEW
 				</div>
-				<select class="form-control" id="select">
-				  <option>1</option>
-				  <option>2</option>
-				  <option>3</option>
-				  <option>4</option>
-				  <option>5</option>
+				<select class="form-control" id="select" ng-model="categoryJ">
+				  <option value="1">1</option>
+				  <option value="2">2</option>
+				  <option value="3">3</option>
+				  <option value="4">4</option>
+				  <option value="5">5</option>
 				</select>
 			  </div>
 			</div>
@@ -89,20 +83,19 @@
 			<div class="form-group">
 			  <label for="subject" class="col-lg-2 control-label">SUBJECT</label>
 			  <div class="col-lg-10">
-				<input type="text" class="form-control" id="subject" placeholder="Subject">
+				<input type="text" class="form-control" id="subject" ng-model="subject" placeholder="Subject">
 			  </div>
 			</div>
 			<div class="form-group">
 			  <label for="textArea" class="col-lg-2 control-label">CONTENTS</label>
 			  <div class="col-lg-10">
-				<summernote config="options"></summernote>
-
+				<summernote config="options" ng-model="contents"></summernote>
 			  </div>
 			</div>
 			<div class="form-group">
 			  <div class="col-lg-10 col-lg-offset-2" style="text-align:right">
 				<button class="btn btn-default" ng-click="close()">Cancel</button>
-				<button type="submit" class="btn btn-primary">Submit</button>
+				<button class="btn btn-primary" ng-click="write()">Submit</button>
 			  </div>
 			</div>
 		  </fieldset>

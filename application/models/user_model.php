@@ -5,6 +5,20 @@ class User_model extends CI_Model {
         parent::__construct();
     }
 
+	function id_get($id){
+		$this->db->where(array(
+			'id'   => $id,
+		));
+
+		$query = $this->db->get('users');
+		$res = $query->result_array();
+		if(count($res) > 0){
+			return $res[0];
+		}else{
+			return false;
+		}
+	}
+
 	function chk_id($id){
 		$this->db->select('id');
 		$this->db->where(array(

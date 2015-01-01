@@ -1,92 +1,83 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Board extends CI_Controller {
+
+	/*
+	 * 글목록
+	 */
 	public function lists(){
 
-		$user_id = $this->input->get('user_id');
-		$page = $this->input->get('page');
-
+		$this->load->model('user_model','',TRUE);
 		$this->load->model('board_model','',TRUE);
 
-		$data = $this->board_model->lists($user_id,$page,10);
+		$user_id = $this->input->get('user_id');
+		$page    = $this->input->get('page');
 
-		//echo "<pre>"; print_r($data); "</pre>";
+		$user_info = $this->user_model->id_get($user_id);
+		$user_seq = $user_info['user_seq'];
 
-
+		$data = $this->board_model->lists($user_seq,$page,2);
 
 		echo json_encode(array(
 			'result' => 'true',
-			'data'   => $data["items"]
+			'data'   => $data["items"],
+			'paging' => $data["paging"]
 		));
-
-
 	}
+
 	/*
-	public function login(){
-		$data = json_decode(file_get_contents('php://input'),true);
+	 * 글쓰기
+	 */
+	public function write(){
+
 
 		$this->load->model('user_model','',TRUE);
-		$id   = $data["id"];
-		$pass = $data["pass"];
-		$pass = md5($pass);
-		$result = $this->user_model->auth($id,$pass);
+		$this->load->model('board_model','',TRUE);
 
-		# 세션 만들기
-		if($result){
-			$newdata = array(
-			   'id' => $id
-		    );
-			$this->session->set_userdata($newdata);
-		}
-
-		echo json_encode(array(
-			'result' => ($result)?'true':'false'
-		));
-	}
-
-	public function logout(){
-		$this->session->sess_destroy();
-	}
-
-	public function signup(){
 		$data = json_decode(file_get_contents('php://input'),true);
 
-		if( !isset($data['id']) || !trim($data['id'])){
+
+		if( !isset($data['user_id']) || !trim($data['user_id'])){
 			echo json_encode(array(
 				'result' => 'false',
 				'msg'    => 'id_none'
 			));
 			exit;
 		}else{
-			$id = $data['id'];
+			$user_info = $this->user_model->id_get($data['user_id']);
+			$user_seq = $user_info['user_seq'];
+
+			$write_user_info = $this->user_model->id_get($this->session->userdata('id'));
+			$write_user_seq = $write_user_info['user_seq'];
 		}
-		if( !isset($data['pass']) || !trim($data['pass'])){
+
+		if( !isset($data['subject']) || !trim($data['subject'])){
 			echo json_encode(array(
 				'result' => 'false',
-				'msg'    => 'pass_none'
+				'msg'    => 'subject_none'
 			));
 			exit;
 		}else{
-			$pass = $data['pass'];
+			$subject = $data['subject'];
 		}
 
-		$this->load->model('user_model','',TRUE);
-
-		// 있는 아이디 인지 체크
-		if($this->user_model->chk_id($id)){
+		if( !isset($data['category']) || !trim($data['category'])){
 			echo json_encode(array(
 				'result' => 'false',
-				'msg'    => 'exists_id'
+				'msg'    => 'category_none'
 			));
 			exit;
+		}else{
+			$category = $data['category'];
 		}
 
-		$pass = md5($pass);
-		$result = $this->user_model->signup($id,$pass);
+		$contents = $data['contents'];
+
+		$result = $this->board_model->write($user_seq,$write_user_seq,$category,$subject,$contents);
 
 		echo json_encode(array(
 			'result' => ($result)?'true':'false'
 		));
 	}
-	 */
+
 }

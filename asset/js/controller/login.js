@@ -64,7 +64,7 @@ login.controller('loginController', function ($scope,$http,$modal,loginservice) 
 			}
 		}).
 		error(function(data){
-			alert('서버오류 입니다.');
+			alert('SERVER_ERROR.');
 		});
 	}
 
