@@ -1,5 +1,35 @@
 <!--link rel="stylesheet" type="text/css" href="/asset/css/typing.css" /-->
 
+
+<div>
+	<ul class="pagination pagination-sm">
+		<li class="write">
+			<a class="pointer" ng-click="write_dialog()">write</a>
+		</li>
+		<li class="disabled">
+			<a href="#">«</a>
+		</li>
+		<li class="active">
+			<a href="#">1</a>
+		</li>
+		<li>
+			<a href="#">2</a>
+		</li>
+		<li>
+			<a href="#">3</a>
+		</li>
+		<li>
+			<a href="#">4</a>
+		</li>
+		<li>
+			<a href="#">5</a>
+		</li>
+		<li>
+			<a href="#">»</a>
+		</li>
+	</ul>
+<div>
+
 <!-- Board AREA -->
 <div class>
 	<table class="table table-striped">
@@ -26,33 +56,57 @@
 	</table>
 </div>
 
-<div style="text-align:center;">
-	<ul class="pagination pagination-sm">
-		<li class="disabled"><a href="#">«</a></li>
-		<li class="active"><a href="#">1</a></li>
-		<li><a href="#">2</a></li>
-		<li><a href="#">3</a></li>
-		<li><a href="#">4</a></li>
-		<li><a href="#">5</a></li>
-		<li><a href="#">»</a></li>
-	</ul>
-<div>
+
 
 <!-- DIALOG -->
 <div ng-controller="boardDialogController" style="display:none">
 <script type="text/ng-template" id="dialog_comm">
 	<div class="modal-header">
-		<h3 class="modal-title">RESULT</h3>
+		<h4 class="modal-title">WRITE</h4>
 	</div>
 	<div class="modal-body">
-		<p>spend_time : {{ record_time }} second</p>
-		<p>active_count : {{ active_count }} character</p>
-		<p>character per minute : {{ cpm }} cpm</p>
-	</div>
-	<div class="modal-footer">
-		<button class="btn btn-primary" ng-click="play()">REPLAY</button>
-		<button class="btn btn-primary" ng-click="next()">NEXT</button>
-		<button class="btn btn-primary" ng-click="close()">CLOSE</button>
+		<form class="form-horizontal">
+		  <fieldset>
+
+			<div class="form-group">
+			  <label for="select" class="col-lg-2 control-label">CATEGORY</label>
+			  <div class="col-lg-10">
+				<div style="padding:10px;">
+			    <input type="radio" name="category_ui" value="select">SELECT
+				&nbsp;
+			    <input type="radio" name="category_ui" value="text">NEW
+				</div>
+				<select class="form-control" id="select">
+				  <option>1</option>
+				  <option>2</option>
+				  <option>3</option>
+				  <option>4</option>
+				  <option>5</option>
+				</select>
+			  </div>
+			</div>
+
+			<div class="form-group">
+			  <label for="subject" class="col-lg-2 control-label">SUBJECT</label>
+			  <div class="col-lg-10">
+				<input type="text" class="form-control" id="subject" placeholder="Subject">
+			  </div>
+			</div>
+			<div class="form-group">
+			  <label for="textArea" class="col-lg-2 control-label">CONTENTS</label>
+			  <div class="col-lg-10">
+				<summernote config="options"></summernote>
+
+			  </div>
+			</div>
+			<div class="form-group">
+			  <div class="col-lg-10 col-lg-offset-2" style="text-align:right">
+				<button class="btn btn-default" ng-click="close()">Cancel</button>
+				<button type="submit" class="btn btn-primary">Submit</button>
+			  </div>
+			</div>
+		  </fieldset>
+		</form>
 	</div>
 </script>
 </div>

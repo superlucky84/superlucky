@@ -42,3 +42,14 @@ code {
 	cursor:pointer;
 }
 
+
+.pagination > .write > span,
+.pagination > .write > span:hover,
+.pagination > .write > span:focus,
+.pagination > .write > a,
+.pagination > .write > a:hover,
+.pagination > .write > a:focus {
+  color: #ffffff;
+  background-color: black;
+  border-color: transparent;
+}

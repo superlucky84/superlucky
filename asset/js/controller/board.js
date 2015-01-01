@@ -1,5 +1,7 @@
 
 
+
+
 // 컨트롤러 간 공유
 superlucky.service('boardservice',function(){
 
@@ -13,9 +15,25 @@ superlucky.service('boardservice',function(){
 // 다이얼로그 컨트롤러
 .controller('boardDialogController', function ($scope,$http,$modal,boardservice) {
 
+
 	// STOP 클릭
 	$scope.close = function(){
-		typingservice.dialog_instance.dismiss('cancel');
+		boardservice.dialog_instance.dismiss('cancel');
+	};
+
+
+	 $scope.options = {
+		  height: 150,
+		  lang :'ko-KR'
+	/*
+		  toolbar: [
+			['style', ['bold', 'italic', 'underline', 'clear']],
+			['fontsize', ['fontsize']],
+			['color', ['color']],
+			['para', ['ul', 'ol', 'paragraph']],
+			['height', ['height']]
+		  ]
+	*/
 	};
 
 
@@ -29,7 +47,6 @@ superlucky.service('boardservice',function(){
 	angular.element(document.getElementById('board')).addClass('active');
 
 	
-
 	var board = {
 		page : 1,
 		lists : function(){
@@ -48,9 +65,14 @@ superlucky.service('boardservice',function(){
 	board.lists();
 
 
+	$scope.write_dialog = function(){
+		dialog('lg');
+	}
+
+
 	// dialog
 	dialog = function(size){
-		typingservice.dialog_instance = $modal.open({
+		boardservice.dialog_instance = $modal.open({
 			templateUrl: 'dialog_comm',
 			controller: 'boardDialogController',
 			size: size,
