@@ -29,7 +29,7 @@ class Board_model extends CI_Model {
 		$noseq = $return["total"] - ($page_range * ($page-1));
 
 		// PAGING RANGE
-		$paging_range = 6;
+		$paging_range = 10;
 		$return['paging']['paging_range'] = $paging_range;
 
 		// PAGING TOTAL
