@@ -68,10 +68,15 @@ class Board_model extends CI_Model {
 
 
 		if(count($return["items"]) > 0){
+			$return_new = array();
+			$return["contents"] = array();
 			foreach($return["items"] as $key => $value){
+				$return["items"][$key] = $value;
 				$return["items"][$key]['no'] = $noseq--;
-				$return["items"][$key]['regdate'] = substr($value['regdate'],0,16);
-				$return["items"][$key]['moddate'] = substr($value['moddate'],0,16);
+				$return["items"][$key]['regdate'] = date("y-m-d H:i",strtotime($value['regdate']));
+				$return["items"][$key]['moddate'] = date("y-m-d H:i",strtotime($value['moddate']));
+				$return["contents"][$value["board_seq"]] = $value["contents"];
+				unset($return["items"][$key]["contents"]);
 			}
 
 			return $return;

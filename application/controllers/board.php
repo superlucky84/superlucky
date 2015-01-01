@@ -16,12 +16,13 @@ class Board extends CI_Controller {
 		$user_info = $this->user_model->id_get($user_id);
 		$user_seq = $user_info['user_seq'];
 
-		$data = $this->board_model->lists($user_seq,$page,15);
+		$data = $this->board_model->lists($user_seq,$page,5);
 
 		echo json_encode(array(
-			'result' => 'true',
-			'data'   => $data["items"],
-			'paging' => $data["paging"]
+			'result'   => 'true',
+			'data'     => $data["items"],
+			'contents' => $data["contents"],
+			'paging'   => $data["paging"]
 		));
 	}
 

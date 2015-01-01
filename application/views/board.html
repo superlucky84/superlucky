@@ -20,15 +20,17 @@
 
 <!-- Board AREA -->
 <div class>
-	<table class="table table-striped">
+	<table id="jtable" class="table">
 		<colgroup>
-			<col width="5%">
+			<col width="30px">
+			<col width="100px">
 			<col width="*">
-			<col width="20%">
+			<col width="125px">
 		</colgroup>
 		<thead>
 		<tr>
 			<th>NO.</th>
+			<th>CATE.</th>
 			<th>SUBJECT.</th>
 			<th>DATE.</th>
 		</tr>
@@ -39,9 +41,10 @@
 			<td colspan="3">DATA NONE.</td>
 		</tr>
 
-		<tr ng-repeat="list in lists" ng-hide="list_hide"  class="ng-ani-enter">
+		<tr ng-repeat="list in lists" ng-hide="list_hide"  class="ng-ani-enter" style="border-bottom:1px solid gray">
 			<td>{{ list.no }}</td>
-			<td>{{ list.subject }}</td>
+			<td>{{ list.category }}</td>
+			<td class="pointer" ng-click="view($event)" data-no="{{ list.board_seq }}">{{ list.subject }}</td>
 			<td>{{ list.regdate }}</td>
 		</tr>
 

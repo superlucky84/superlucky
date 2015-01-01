@@ -85,8 +85,10 @@ superlucky.service('boardservice',function(){
 
 					// list print
 					$scope.lists = data.data;
+					$scope.contents = data.contents;
 					$scope.list_hide = false;
 					$scope.none_hide = true;
+
 
 					// paging print
 					var paging = data.paging;
@@ -161,6 +163,20 @@ superlucky.service('boardservice',function(){
 			}
 		}
 		board.list(page);
+	}
+
+	$scope.view = function(e){
+
+		var target = angular.element(e.target);
+		var board_seq = target.data("no");
+		var $TR = target.parent();
+		var toggle_chk = $TR.next(".active").length;
+
+		$TR.parent().children(".active").remove();
+
+		if(toggle_chk==0){
+			$TR.after("<tr ng-hide='list_hide' class='active ng-ani-enter' style='height:200px'><td colspan='4'>"+$scope.contents[board_seq]+"</td><tr>");
+		}
 	}
 
 	$scope.write = function(data){
