@@ -108,12 +108,14 @@ superlucky.service('typingservice',function(){
 				if(data.result == 'true'){
 					var data_string = data.data;
 
+
 					data_string = data_string.replace(/\t/g,"    ");
 					data_string = data_string.replace(/\n\r/g,"\n");
 					data_string = data_string.replace(/\r/g,"\n");
 					data_string = data_string.replace(/[ㄱ-ㅎ가-힣]/g,"");
 
 					var words_array = data_string.split('');
+
 
 
 					clearInterval(typing.record_interval);
@@ -131,6 +133,7 @@ superlucky.service('typingservice',function(){
 
 					typing.$DIV.html('');
 					typing.$DIV.hide();
+
 
 					$scope.complate = false;
 					$scope.keycode = 0;

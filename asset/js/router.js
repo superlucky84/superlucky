@@ -14,6 +14,6 @@ function($routeProvider) {
         controller: 'logoutController'
       }).
       otherwise({
-        redirectTo: '/'+superlucky.user_id+'/typingio'
+        redirectTo: '/'+superlucky.user_id+'/'+superlucky.main_category
       });
 }]);
