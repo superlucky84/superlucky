@@ -1,0 +1,44 @@
+<link rel="stylesheet" type="text/css" href="/asset/css/editor.css" />
+
+<!--
+<button type="button" class="btn btn-xs btn-primary" ng-disabled="replay_btn"  ng-show="complate"  ng-click="play($event)">RePlay</button>
+<button type="button" class="btn btn-xs btn-primary"  ng-click="next($event)">Next</button>
+<button type="button" class="btn btn-xs btn-primary"  ng-click="restart($event)">Restart</button>
+
+<input type="text" id="ng_target" ng-model="keytarget" ng-keypress="key_press($event)" ng-keydown="key_down($event)" ng-blur="key_blur($event)" class="hidden_box">
+<span>&nbsp;</span>
+<span>&nbsp;</span>
+<span>Time : <span id='timecnt'></span></span>
+<span>&nbsp;</span>
+<span>KeyCode : {{ keycode }}</span>
+
+<br>
+<br>
+-->
+
+<input type="text" id="editor_target" ng-model="keytarget"  ng-keypress="key_press($event)" ng-blur="key_blur($event)" style="float:right">
+
+<!-- TYPING AREA -->
+<div>
+	<div id="editor_num_area" style="">
+	</div>
+	<div id="editor_area" ng-keydown="key_down($event)"  ng-blur="key_blur($event)">
+	</div>
+</div>
+
+<!-- DIALOG -->
+<div ng-controller="editorDialogController" style="display:none">
+<script type="text/ng-template" id="dialog_comm">
+	<div class="modal-header">
+		<h3 class="modal-title">RESULT</h3>
+	</div>
+	<div class="modal-body">
+	</div>
+	<div class="modal-footer">
+		<button class="btn btn-primary" ng-click="play()">REPLAY</button>
+		<button class="btn btn-primary" ng-click="next()">NEXT</button>
+		<button class="btn btn-primary" ng-click="close()">CLOSE</button>
+	</div>
+</script>
+</div>
+

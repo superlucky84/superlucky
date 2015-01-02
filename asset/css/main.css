@@ -42,6 +42,10 @@ code {
 	cursor:pointer;
 }
 
+.fl{
+	float:left;
+}
+
 
 .pagination > .write > span,
 .pagination > .write > span:hover,

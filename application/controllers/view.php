@@ -47,4 +47,11 @@ class View extends CI_Controller {
 		$this->load->view('board.html');
 	}
 
+	/*
+	 * 에디터 페이지
+	 */
+	public function editor(){
+		$this->load->view('editor.html');
+	}
+
 }

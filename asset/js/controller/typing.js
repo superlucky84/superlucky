@@ -41,6 +41,11 @@ superlucky.service('typingservice',function(){
 // 타이핑 앱 컨트롤러
 .controller('typingController', function ($scope,$http,$modal,typingservice) {
 
+	var $navbar = angular.element(document.getElementById('navbar'));
+	$navbar.find("li").removeClass('active');
+	angular.element(document.getElementById('typingio')).addClass('active');
+
+	angular.element(".mainpage").removeClass("fl");
 
 	// dialog
 	dialog = function(size){
@@ -53,10 +58,6 @@ superlucky.service('typingservice',function(){
 			}
 		});
 	}
-
-	var $navbar = angular.element(document.getElementById('navbar'));
-	$navbar.find("li").removeClass('active');
-	angular.element(document.getElementById('typingio')).addClass('active');
 
 
 	var typing = {
@@ -115,8 +116,6 @@ superlucky.service('typingservice',function(){
 					data_string = data_string.replace(/[ㄱ-ㅎ가-힣]/g,"");
 
 					var words_array = data_string.split('');
-
-
 
 					clearInterval(typing.record_interval);
 					clearInterval(typing.play_interval);

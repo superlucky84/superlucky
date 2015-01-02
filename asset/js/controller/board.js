@@ -67,6 +67,8 @@ superlucky.service('boardservice',function(){
 	$navbar.find("li").removeClass('active');
 	angular.element(document.getElementById('board')).addClass('active');
 
+	angular.element(".mainpage").removeClass("fl");
+
 	
 	var board = {
 		page : 1,

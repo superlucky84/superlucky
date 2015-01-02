@@ -58,6 +58,9 @@
             <li id="board">
 				<a class="pointer" ng-click="move_category('board')">Board</a>
 			</li>
+            <li id="editor">
+				<a class="pointer" ng-click="move_category('editor')">Editor</a>
+			</li>
             <li id="logout">
 				<a href="#logout">logout</a>
 			</li>
@@ -68,7 +71,7 @@
 
 
     <!-- Begin page content -->
-    <div class="container">
+    <div class="container mainpage">
 		<div ng-view>
 		</div>
     </div>
@@ -84,6 +87,7 @@
 <script src="/asset/js/controller/main.js"></script>
 <script src="/asset/js/controller/typing.js"></script>
 <script src="/asset/js/controller/board.js"></script>
+<script src="/asset/js/controller/editor.js"></script>
 <script src="/asset/js/controller/logout.js"></script>
 </body>
 </html>

@@ -20,6 +20,10 @@ function($routeProvider) {
 			templateUrl: 'view/board',
 			controller: 'boardController'
 		}).
+		when('/:user_id/editor', {
+			templateUrl: 'view/editor',
+			controller: 'editorController'
+		}).
 		when('/logout', {
 			templateUrl: 'user/logout',
 			controller: 'logoutController'

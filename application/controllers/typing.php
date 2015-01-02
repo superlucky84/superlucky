@@ -22,9 +22,6 @@ class Typing extends CI_Controller {
 		$string = trim($string);
 		$data_array = explode("\n",$string);
 
-
-
-
 		$data = "";
 		for($i=$start ; $i <= $end ; $i++){
 			//echo $i."<br>";
@@ -35,7 +32,6 @@ class Typing extends CI_Controller {
 			'result' => 'true',
 			'data'   => $data
 		));
-
 	}
 
 }
