@@ -16,15 +16,26 @@
 <br>
 -->
 
-<input type="text" id="editor_target" ng-model="keytarget"  ng-keypress="key_press($event)" ng-blur="key_blur($event)" style="float:right">
+<div style="height:30px"  ng-hide="target_show">
+<input type='text' id='editor_target' ng-model='keytarget'  ng-keypress='key_press($event)' ng-blur='key_blur($event)' style='float:right' autocomplete='off'>
+</div>
 
 <!-- TYPING AREA -->
-<div>
-	<div id="editor_num_area" style="">
+<div style="width:2000px;">
+	<div id="editor_num_area" >
 	</div>
 	<div id="editor_area" ng-keydown="key_down($event)"  ng-blur="key_blur($event)">
 	</div>
 </div>
+
+<!--
+<div ng-controller="editorTargetBoxController" style="display:none">
+<script type="text/ng-template" id="target_comm">
+<input type='text' id='editor_target' ng-model='keytarget'  ng-keypress='key_press($event)' ng-blur='key_blur($event)' style='float:right' autocomplete='off'>
+</script>
+</div>
+-->
+
 
 <!-- DIALOG -->
 <div ng-controller="editorDialogController" style="display:none">

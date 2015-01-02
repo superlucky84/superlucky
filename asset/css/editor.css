@@ -11,3 +11,10 @@
 	min-width:10px;
 	width:auto;
 }
+.linehigh{
+	background-color:gray;
+}
+
+.editor_line{
+	height:16px;
+}
