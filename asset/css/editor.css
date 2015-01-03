@@ -18,3 +18,14 @@
 .editor_line{
 	height:16px;
 }
+.editor_cursor{
+	position:absolute;
+	width:10px;
+	height:16px;
+	background-color:#7e7;
+	left:0px;
+	top:0px;
+	z-index:1;
+	opacity: 0.5;
+	border:0px;
+}
