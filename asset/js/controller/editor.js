@@ -42,6 +42,8 @@ superlucky.service('editorservice',function(){
 		// 라인 인스턴스
 		this.line_ins = null;
 
+		this.font_width = 9;
+
 		// 파일로드
 		if(typeof this.file_load != "function"){
 			editor_pann.prototype.file_load = function(){
@@ -73,7 +75,7 @@ superlucky.service('editorservice',function(){
 						//_this.$DIV.find("div").eq(0).addClass("linehigh");
 
 
-						//_this.$DIV.attr("contenteditable",true);
+						_this.$DIV.attr("contenteditable",true);
 
 					}).
 					error(function(data){
@@ -100,12 +102,24 @@ superlucky.service('editorservice',function(){
 					//_this.$DIV.attr("contenteditable",false);
 					_this.MODE = "NORMAL";
 
-
 					document.getElementById("editor_target").focus();
 				}
 				// 명령모드
 				else if(TYPE=="COMMAND"){
 					_this.MODE = "COMMAND";
+				}
+			}
+		}
+		// 컬럼위치 재정렬
+		if(typeof this.cursor_column_reset != "function"){
+			editor_pann.prototype.cursor_column_reset = function(){
+				var _this = this;
+				if(_this.line_ins.end < _this.COLUMN){
+					var left = (_this.line_ins.end-1) * _this.font_width;
+					_this.$DIV.find(".editor_cursor").css("left",left+"px");
+				}else{
+					var left = (_this.COLUMN-1) * _this.font_width;
+					_this.$DIV.find(".editor_cursor").css("left",left+"px");
 				}
 			}
 		}
@@ -121,38 +135,40 @@ superlucky.service('editorservice',function(){
 					if([97,105,111].indexOf(keyCode) > -1){
 						_this.mode_change("INSERT");
 					}
-
 					// 왼쪽
 					else if(104 == keyCode){
-
 						if(_this.COLUMN > 1){
-							//_this.$DIV.find("div").eq(_this.ROW-1).removeClass("linehigh");
-							//_this.$DIV.find("div").eq(_this.ROW).addClass("linehigh");
-
+							if(_this.line_ins.end < _this.COLUMN){
+								_this.COLUMN = _this.line_ins.end;
+							}
 							_this.COLUMN--;
-
-							var left = (_this.COLUMN-1) * 9;
+							var left = (_this.COLUMN-1) * _this.font_width;
 							_this.$DIV.find(".editor_cursor").css("left",left+"px");
 						}
 					}
 					// 오른쪽
 					else if(108 == keyCode){
 						if(_this.line_ins.end > _this.COLUMN){
-
+							if(_this.line_ins.end < _this.COLUMN){
+								_this.COLUMN = _this.line_ins.end;
+							}
 							_this.COLUMN++;
-
-							var left = (_this.COLUMN-1) * 9;
+							var left = (_this.COLUMN-1) * _this.font_width;
 							_this.$DIV.find(".editor_cursor").css("left",left+"px");
 						}
 					}
-
 					// 아래로
 					else if(106 == keyCode){
 						if(_this.ROW <= _this.TOTAL_ROW){
 							_this.ROW++;
 
+							_this.$DIV.find("div").eq(_this.ROW).removeClass("linehigh");
+							_this.$DIV.find("div").eq(_this.ROW+1).addClass("linehigh");
+
 							// 라인분석
 							_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.ROW+1));
+							// 커서위치 재정렬
+							_this.cursor_column_reset();
 
 							var top = (_this.ROW-1) * 16;
 							_this.$DIV.find(".editor_cursor").css("top",top+"px");
@@ -163,8 +179,14 @@ superlucky.service('editorservice',function(){
 						if(_this.ROW > 1){
 							_this.ROW--;
 
+							_this.$DIV.find("div").eq(_this.ROW+2).removeClass("linehigh");
+							_this.$DIV.find("div").eq(_this.ROW+1).addClass("linehigh");
+
 							// 라인분석
 							_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.ROW+1));
+							// 커서위치 재정렬
+							_this.cursor_column_reset();
+
 
 							var top = (_this.ROW-1) * 16;
 							_this.$DIV.find(".editor_cursor").css("top",top+"px");
@@ -173,31 +195,46 @@ superlucky.service('editorservice',function(){
 					// 라인 끝으로 이동
 					else if(36 == keyCode){
 						_this.COLUMN = _this.line_ins.end;
-						var left = (_this.COLUMN-1) * 9;
+						var left = (_this.COLUMN-1) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 					// 라인 처음으로 이동
 					else if(94 == keyCode){
 						_this.COLUMN = _this.line_ins.start;
-						var left = (_this.COLUMN) * 9;
+						var left = (_this.COLUMN) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 					// 한단어 이동(w)
 					else if(119 == keyCode){
+
+						if(_this.line_ins.end < _this.COLUMN){
+							_this.COLUMN = _this.line_ins.end;
+						}
+
 						_this.COLUMN = _this.line_ins.move_w("w",_this.COLUMN);
-						var left = (_this.COLUMN-1) * 9;
+						var left = (_this.COLUMN-1) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 					// 한단어 이동(w)
 					else if(101 == keyCode){
+
+						if(_this.line_ins.end < _this.COLUMN){
+							_this.COLUMN = _this.line_ins.end;
+						}
+
 						_this.COLUMN = _this.line_ins.move_w("e",_this.COLUMN);
-						var left = (_this.COLUMN-1) * 9;
+						var left = (_this.COLUMN-1) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 					// 한단어 뒤로(b)
 					else if(98 == keyCode){
+
+						if(_this.line_ins.end < _this.COLUMN){
+							_this.COLUMN = _this.line_ins.end;
+						}
+
 						_this.COLUMN = _this.line_ins.move_b(_this.COLUMN);
-						var left = (_this.COLUMN-1) * 9;
+						var left = (_this.COLUMN-1) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 
@@ -276,7 +313,7 @@ superlucky.service('editorservice',function(){
 				}
 			}
 		}
-		// 라인 커서이동
+		// 단어이동 forward
 		if(typeof this.move_w != "function"){
 			editor_line.prototype.move_w = function(move_type,start_pos){
 
@@ -306,16 +343,17 @@ superlucky.service('editorservice',function(){
 				return cursor;
 			}
 		}
-		// 라인 커서이동
+		// 단어이동 back
 		if(typeof this.move_b != "function"){
 			editor_line.prototype.move_b = function(start_pos){
 				var _this = this;
 				var line_s_cut = _this.line_string.substr(0,start_pos-1);
 				line_s_cut = line_s_cut.split("").reverse().join("");
 
-				var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]))/);
+				var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]|$))/);
 				var cursor = start_pos;
 				if(w_anal){
+
 					cursor = start_pos - w_anal['index']-1;
 				}
 				return cursor;
