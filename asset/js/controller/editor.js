@@ -49,7 +49,8 @@ superlucky.service('editorservice',function(){
 				$http({ url: '/editor/prototype', method: "GET", async:false }).
 					success(function(data){
 
-						var pann = data.data.replace(/[ ]/g,"&nbsp;").split(/\n/);
+						var pann = data.data.replace(/[\&]/g,"&amp;").replace(/[ ]/g,"&nbsp;").split(/\n/);
+						//var pann = data.data.replace(/[ ]/g,"&nbsp;").split(/\n/);
 						console.log(pann.length);
 
 						var num = 0;
@@ -72,7 +73,7 @@ superlucky.service('editorservice',function(){
 						//_this.$DIV.find("div").eq(0).addClass("linehigh");
 
 
-						_this.$DIV.attr("contenteditable",true);
+						//_this.$DIV.attr("contenteditable",true);
 
 					}).
 					error(function(data){
@@ -181,6 +182,24 @@ superlucky.service('editorservice',function(){
 						var left = (_this.COLUMN) * 9;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
+					// 한단어 이동(w)
+					else if(119 == keyCode){
+						_this.COLUMN = _this.line_ins.move_w("w",_this.COLUMN);
+						var left = (_this.COLUMN-1) * 9;
+						_this.$DIV.find(".editor_cursor").css("left",left+"px");
+					}
+					// 한단어 이동(w)
+					else if(101 == keyCode){
+						_this.COLUMN = _this.line_ins.move_w("e",_this.COLUMN);
+						var left = (_this.COLUMN-1) * 9;
+						_this.$DIV.find(".editor_cursor").css("left",left+"px");
+					}
+					// 한단어 뒤로(b)
+					else if(98 == keyCode){
+						_this.COLUMN = _this.line_ins.move_b(_this.COLUMN);
+						var left = (_this.COLUMN-1) * 9;
+						_this.$DIV.find(".editor_cursor").css("left",left+"px");
+					}
 
 					// 되돌리기
 					else if(117 == keyCode){
@@ -228,16 +247,19 @@ superlucky.service('editorservice',function(){
 		this.start = 1;
 		// 종료점
 		this.end = 1;
+		// list_string
+		this.line_string = "";
 
+		// 라인분석
 		if(typeof this.analisys != "function"){
 			editor_line.prototype.analisys = function(line){
 
 				var _this = this;
 				var line_string = line.html().replace(/&nbsp;/g," ");
+				line_string = line_string.replace(/&amp;/g,":");
+				_this.line_string = line_string;
 
-				console.log(line_string.match(/(([^\w]|([ ]))[\w])|([^\w])/g));
-
-
+				//console.log(line_string.match(/([^\w ]|([ ]|[^\w])[\w])/));
 
 				// start 구하기
 				var start_match = line_string.match(/^[ ]+/);
@@ -252,6 +274,51 @@ superlucky.service('editorservice',function(){
 				if(end_match){
 					_this.end = end_match['index'];
 				}
+			}
+		}
+		// 라인 커서이동
+		if(typeof this.move_w != "function"){
+			editor_line.prototype.move_w = function(move_type,start_pos){
+
+				var _this = this;
+				var line_s_cut = _this.line_string.substr(start_pos);
+				var w_anal = null;
+
+				if("w" == move_type){
+					if(_this.line_string.substring(start_pos-1,start_pos).match(/[^\w ]/)){
+						var w_anal = line_s_cut.match(/((^|[ ]|[^\w])[\w]|[^\w ])/);
+					}else{
+						var w_anal = line_s_cut.match(/(([ ]|[^\w])[\w]|[^\w ])/);
+					}
+				}
+				else if("e" == move_type){
+					var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]|$))/);
+				}
+
+				var cursor = start_pos;
+				if(w_anal){
+					cursor = w_anal['index']+start_pos;
+					if(w_anal[0].substr(0,1)==" "){
+						cursor = cursor+1;
+					}
+					cursor =  cursor+1;
+				}
+				return cursor;
+			}
+		}
+		// 라인 커서이동
+		if(typeof this.move_b != "function"){
+			editor_line.prototype.move_b = function(start_pos){
+				var _this = this;
+				var line_s_cut = _this.line_string.substr(0,start_pos-1);
+				line_s_cut = line_s_cut.split("").reverse().join("");
+
+				var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]))/);
+				var cursor = start_pos;
+				if(w_anal){
+					cursor = start_pos - w_anal['index']-1;
+				}
+				return cursor;
 			}
 		}
 	}
