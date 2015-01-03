@@ -101,6 +101,8 @@ superlucky.service('editorservice',function(){
 						_this.line_ins = new editor_line();
 
 						//_this.$DIV.find("div").eq(0).addClass("linehigh");
+
+						_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.ROW+1));
 						_this.$DIV.attr("contenteditable",true);
 
 					}).
