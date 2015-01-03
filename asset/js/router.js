@@ -4,11 +4,11 @@ function($routeProvider) {
 	var hash_base = location.hash.split("/");
 	hash_base = hash_base[hash_base.length-1];
 
-	var hash_type =  ['board','typingio'];
+	var hash_type =  ['board','typingio','editor'];
 	if(hash_type.indexOf(hash_base) > -1){
 		superlucky.main_category = hash_base;
 	}else{
-		superlucky.main_category = "typingio";
+		superlucky.main_category = "editor";
 	}
 
     $routeProvider.

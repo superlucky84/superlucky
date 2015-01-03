@@ -4,6 +4,7 @@
 
 @font-face { 
 	font-family: 'Ubuntu Mono'; 
+	font-size:12pt;
 	font-style: normal;
 	font-weight: 400;
 	src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url('..fonts/ViZhet7Ak-LRXZMXzuAfkY4P5ICox8Kq3LLUNMylGO4.woff2') format('woff2'), url('..fonts/ViZhet7Ak-LRXZMXzuAfkYbN6UDyHWBl620a-IRfuBk.woff') format('woff');
@@ -33,6 +34,9 @@
 }
 
 .hidden_box{
+	position:absolute;
+	left:0px;
+	top:0px;
 	width:10px;
 	background-color:#222222;
 	color:#222222;
