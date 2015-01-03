@@ -71,7 +71,7 @@ superlucky.service('editorservice',function(){
 		// 라인 인스턴스
 		this.line_ins = null;
 
-		this.font_width = 9;
+		this.font_width = 8;
 
 		// 파일로드
 		if(typeof this.file_load != "function"){

@@ -1,22 +1,43 @@
 /*@import url(http://fonts.googleapis.com/earlyaccess/nanumgothiccoding.css');*/
 /*font-family: 'Nanum Gothic Coding', serif;*/
+
+
+@font-face { 
+	font-family: 'Ubuntu Mono'; 
+	font-style: normal;
+	font-weight: 400;
+	src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url('..fonts/ViZhet7Ak-LRXZMXzuAfkY4P5ICox8Kq3LLUNMylGO4.woff2') format('woff2'), url('..fonts/ViZhet7Ak-LRXZMXzuAfkYbN6UDyHWBl620a-IRfuBk.woff') format('woff');
+}
+
+
 #editor_area{
-	font-family:courier New,courier;
-	/*font-size:12pt;*/
+	/*font-family:courier New,courier;*/
+	font-family:'Ubuntu Mono';
+	color:gray;
+	font-size:12pt;
 	float:left;
 	/*border:1px solid blue;*/
 	max-width:1100px;
 }
 #editor_num_area{
-	font-family:courier New,courier;
-	/*font-size:12pt;*/
-	color:gray;
+	/*font-family:courier New,courier;*/
+	font-family:'Ubuntu Mono';
+	font-size:12pt;
+	color:#464646;
 	float:left;
 	min-width:10px;
 	width:auto;
 }
 .linehigh{
 	background-color:#2C2C2C;
+}
+
+.hidden_box{
+	width:10px;
+	background-color:#222222;
+	color:#222222;
+	border:0px solid #222222;
+	float:right;
 }
 
 .editor_line{
