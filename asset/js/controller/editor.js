@@ -62,15 +62,13 @@ superlucky.service('editorservice',function(){
 		this.$NUM_DIV = angular.element(document.getElementById('editor_num_area'));
 		// vi모드 (NORMAL, INSERT, COMMAND)
 		this.MODE = "NORMAL";
-		// 행
-		this.ROW    = 1;
-		// 열
-		this.COLUMN = 1;
 		// 전체 행 개수
 		this.TOTAL_ROW = 0;
 		// 라인 인스턴스
 		this.line_ins = null;
-
+		// 커서 인스턴스
+		this.cur_ins = null;
+		// 폰트 넓이
 		this.font_width = 9;
 
 		// 파일로드
@@ -100,9 +98,12 @@ superlucky.service('editorservice',function(){
 						// 라인 인스턴스 생성
 						_this.line_ins = new editor_line();
 
-						//_this.$DIV.find("div").eq(0).addClass("linehigh");
+						// 커서 인스턴스 생성
+						_this.cur_ins = new editor_cursor(_this.font_width,_this.$DIV.find(".editor_cursor"));
 
-						_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.ROW+1));
+						_this.$DIV.find("div").eq(2).addClass("linehigh");
+
+						_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 						_this.$DIV.attr("contenteditable",true);
 
 					}).
@@ -129,7 +130,7 @@ superlucky.service('editorservice',function(){
 					_this.$DIV.find(".editor_cursor").hide();
 
 					// 입력 모드에 커서위치 잡기
-					_this.line_ins.set_insert_cursor(_this.$DIV.find("div").eq(_this.ROW+1),_this.COLUMN);
+					_this.cur_ins.set_insert_cursor(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 
 				}
 				// 일반모드
@@ -140,7 +141,7 @@ superlucky.service('editorservice',function(){
 					$scope.keytarget = "";
 
 					// 커서위치 재정렬
-					_this.COLUMN--;
+					_this.cur_ins.COLUMN--;
 
 					//_this.$DIV.find(".editor_cursor").css("width","10px");
 
@@ -148,12 +149,13 @@ superlucky.service('editorservice',function(){
 					_this.$DIV.find(".editor_cursor").show();
 
 					// 일반모드에 커서위치 잡기
-					var diff_len = _this.line_ins.set_normal_cursor(_this.$DIV.find("div"),_this.ROW);
-					_this.COLUMN = _this.COLUMN + diff_len;
+					var diff_len = _this.cur_ins.set_normal_cursor(_this.line_ins.line_string,_this.$DIV.find("div"));
+
+					// 라인 정보 다시분석
+					_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 
 					// 컬럼리셋
-					_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.ROW+1));
-					_this.cursor_column_reset();
+					_this.cur_ins.cursor_column_reset(_this.line_ins.end);
 
 
 				}
@@ -161,18 +163,6 @@ superlucky.service('editorservice',function(){
 				else if(TYPE=="COMMAND"){
 					_this.MODE = "COMMAND";
 				}
-			}
-		}
-		// 컬럼위치 재정렬
-		if(typeof this.cursor_column_reset != "function"){
-			editor_pann.prototype.cursor_column_reset = function(reset_type){
-				var _this = this;
-				if(_this.line_ins.end < _this.COLUMN && !reset_type){
-					var left = (_this.line_ins.end-1) * _this.font_width;
-				}else{
-					var left = (_this.COLUMN-1) * _this.font_width;
-				}
-				_this.$DIV.find(".editor_cursor").css("left",left+"px");
 			}
 		}
 		// 키코드 액션
@@ -188,14 +178,14 @@ superlucky.service('editorservice',function(){
 					/*
 					var orig_st = _this.$DIV.find("div").eq(_this.ROW+1).html().replace(/&nbsp;/g," ");
 					var res = String.fromCharCode(keyCode);
-					var pre_string  = orig_st.substr(0,_this.COLUMN-1);
-					var next_string = orig_st.substring(_this.COLUMN-1,orig_st.length);
+					var pre_string  = orig_st.substr(0,_this.cur_ins.COLUMN-1);
+					var next_string = orig_st.substring(_this.cur_ins.COLUMN-1,orig_st.length);
 					var return_text = pre_string+res+next_string;
 					return_text = return_text.replace(/ /g,"&nbsp;");
 					_this.$DIV.find("div").eq(_this.ROW+1).html(return_text);
-					_this.COLUMN++;
+					_this.cur_ins.COLUMN++;
 					// 커서위치 재정렬
-					_this.cursor_column_reset();
+					_this.cur_ins.cursor_column_reset();
 					*/
 
 				}
@@ -203,133 +193,130 @@ superlucky.service('editorservice',function(){
 				else if(_this.MODE=="NORMAL"){
 					if([65,97,73,105,111].indexOf(keyCode) > -1){
 						if(97 == keyCode){
-							_this.COLUMN++;
-							_this.cursor_column_reset("FORCE");
+							_this.cur_ins.COLUMN++;
+							_this.cur_ins.cursor_column_reset(_this.line_ins.end,"FORCE");
 						}
 						else if(65 == keyCode){
-							_this.COLUMN = _this.line_ins.end+1;
-							_this.cursor_column_reset("FORCE");
+							_this.cur_ins.COLUMN = _this.line_ins.end+1;
+							_this.cur_ins.cursor_column_reset(_this.line_ins.end,"FORCE");
 						}
 						else if(73 == keyCode){
-							_this.COLUMN = _this.line_ins.start+1;
-							_this.cursor_column_reset();
+							_this.cur_ins.COLUMN = _this.line_ins.start+1;
+							_this.cur_ins.cursor_column_reset(_this.line_ins.end);
 						}
 						_this.mode_change("INSERT");
 					}
 					// 왼쪽
 					else if(104 == keyCode){
-						if(_this.COLUMN > 1){
-							if(_this.line_ins.end < _this.COLUMN){
-								_this.COLUMN = _this.line_ins.end;
+						if(_this.cur_ins.COLUMN > 1){
+							if(_this.line_ins.end < _this.cur_ins.COLUMN){
+								_this.cur_ins.COLUMN = _this.line_ins.end;
 							}
-							_this.COLUMN--;
-							var left = (_this.COLUMN-1) * _this.font_width;
+							_this.cur_ins.COLUMN--;
+							var left = (_this.cur_ins.COLUMN-1) * _this.font_width;
 							_this.$DIV.find(".editor_cursor").css("left",left+"px");
 						}
 					}
 					// 오른쪽
 					else if(108 == keyCode){
-						if(_this.line_ins.end > _this.COLUMN){
-							if(_this.line_ins.end < _this.COLUMN){
-								_this.COLUMN = _this.line_ins.end;
+						if(_this.line_ins.end > _this.cur_ins.COLUMN){
+							if(_this.line_ins.end < _this.cur_ins.COLUMN){
+								_this.cur_ins.COLUMN = _this.line_ins.end;
 							}
-							_this.COLUMN++;
-							var left = (_this.COLUMN-1) * _this.font_width;
+							_this.cur_ins.COLUMN++;
+							var left = (_this.cur_ins.COLUMN-1) * _this.font_width;
 							_this.$DIV.find(".editor_cursor").css("left",left+"px");
 						}
 					}
 					// 아래로
 					else if(106 == keyCode){
-						if(_this.ROW <= _this.TOTAL_ROW){
-							_this.ROW++;
+						if(_this.cur_ins.ROW <= _this.TOTAL_ROW){
+							_this.cur_ins.ROW++;
 
-							_this.$DIV.find("div").eq(_this.ROW).removeClass("linehigh");
-							_this.$DIV.find("div").eq(_this.ROW+1).addClass("linehigh");
+							_this.$DIV.find("div").eq(_this.cur_ins.ROW).removeClass("linehigh");
+							_this.$DIV.find("div").eq(_this.cur_ins.ROW+1).addClass("linehigh");
 
 							// 라인분석
-							_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.ROW+1));
+							_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 							// 커서위치 재정렬
-							_this.cursor_column_reset();
+							_this.cur_ins.cursor_column_reset(_this.line_ins.end);
 
-							var top = (_this.ROW-1) * 16;
+							var top = (_this.cur_ins.ROW-1) * 16;
 							_this.$DIV.find(".editor_cursor").css("top",top+"px");
 						}
 					}
 					// 위로
 					else if(107 == keyCode){
-						if(_this.ROW > 1){
-							_this.ROW--;
+						if(_this.cur_ins.ROW > 1){
+							_this.cur_ins.ROW--;
 
-							_this.$DIV.find("div").eq(_this.ROW+2).removeClass("linehigh");
-							_this.$DIV.find("div").eq(_this.ROW+1).addClass("linehigh");
+							_this.$DIV.find("div").eq(_this.cur_ins.ROW+2).removeClass("linehigh");
+							_this.$DIV.find("div").eq(_this.cur_ins.ROW+1).addClass("linehigh");
 
 							// 라인분석
-							_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.ROW+1));
+							_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 							// 커서위치 재정렬
-							_this.cursor_column_reset();
+							_this.cur_ins.cursor_column_reset(_this.line_ins.end);
 
 
-							var top = (_this.ROW-1) * 16;
+							var top = (_this.cur_ins.ROW-1) * 16;
 							_this.$DIV.find(".editor_cursor").css("top",top+"px");
 						}
 					}
 					// 라인 끝으로 이동
 					else if(36 == keyCode){
-						_this.COLUMN = _this.line_ins.end;
-						var left = (_this.COLUMN-1) * _this.font_width;
+						_this.cur_ins.COLUMN = _this.line_ins.end;
+						var left = (_this.cur_ins.COLUMN-1) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 					// 라인 처음으로 이동
 					else if(94 == keyCode){
-						_this.COLUMN = _this.line_ins.start;
-						var left = (_this.COLUMN) * _this.font_width;
+						_this.cur_ins.COLUMN = _this.line_ins.start+1;
+						var left = (_this.cur_ins.COLUMN-1) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 					// 한단어 이동(w)
 					else if(119 == keyCode){
 
-						if(_this.line_ins.end < _this.COLUMN){
-							_this.COLUMN = _this.line_ins.end;
+						if(_this.line_ins.end < _this.cur_ins.COLUMN){
+							_this.cur_ins.COLUMN = _this.line_ins.end;
 						}
 
-						_this.COLUMN = _this.line_ins.move_w("w",_this.COLUMN);
-						var left = (_this.COLUMN-1) * _this.font_width;
+						_this.cur_ins.COLUMN = _this.line_ins.move_w("w",_this.cur_ins.COLUMN);
+						var left = (_this.cur_ins.COLUMN-1) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 					// 한단어 이동(w)
 					else if(101 == keyCode){
 
-						if(_this.line_ins.end < _this.COLUMN){
-							_this.COLUMN = _this.line_ins.end;
+						if(_this.line_ins.end < _this.cur_ins.COLUMN){
+							_this.cur_ins.COLUMN = _this.line_ins.end;
 						}
 
-						_this.COLUMN = _this.line_ins.move_w("e",_this.COLUMN);
-						var left = (_this.COLUMN-1) * _this.font_width;
+						_this.cur_ins.COLUMN = _this.line_ins.move_w("e",_this.cur_ins.COLUMN);
+						var left = (_this.cur_ins.COLUMN-1) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 					// 한단어 뒤로(b)
 					else if(98 == keyCode){
 
-						if(_this.line_ins.end < _this.COLUMN){
-							_this.COLUMN = _this.line_ins.end;
+						if(_this.line_ins.end < _this.cur_ins.COLUMN){
+							_this.cur_ins.COLUMN = _this.line_ins.end;
 						}
 
-						_this.COLUMN = _this.line_ins.move_b(_this.COLUMN);
-						var left = (_this.COLUMN-1) * _this.font_width;
+						_this.cur_ins.COLUMN = _this.line_ins.move_b(_this.cur_ins.COLUMN);
+						var left = (_this.cur_ins.COLUMN-1) * _this.font_width;
 						_this.$DIV.find(".editor_cursor").css("left",left+"px");
 					}
 
 					// 되돌리기
 					else if(117 == keyCode){
-						//_this.$DIV.attr("contenteditable",true);
 
 						//document.getElementById("editor_area").focus();
 						document.execCommand('undo', false, null);
 						document.execCommand('undo', false, null);
 						document.execCommand('undo', false, null);
 						//document.getElementById("editor_target").focus();
-						//document.getElementById("editor_area").execCommand('undo', false, null);
-						//_this.$DIV.attr("contenteditable",false);
 					}
 					//else if([58].indexOf(keyCode) > -1){
 						//_this.mode_change("COMMAND");
@@ -444,25 +431,55 @@ superlucky.service('editorservice',function(){
 			}
 		}
 
-		// 일반모드에 커서위치 잡기
-		if(typeof this.set_normal_cursor != "function"){
-			editor_line.prototype.set_normal_cursor = function(lines,row){
-				var _this = this;
-				var org_length = _this.line_string.length;
-				var new_length = lines.eq(row+1).html().replace(/(&nbsp;|&amp;)/g," ").length;
 
-				return new_length - org_length;
+
+	}
+	// Class 정의 (커서클레스)
+	function editor_cursor(font_width,$CURSOR_DIV){
+		// 행
+		this.ROW    = 1;
+		// 열
+		this.COLUMN = 1;
+		// 폰트 넓이
+		this.font_width = font_width;
+		// 커서 돔 객체
+		this.$CURSOR_DIV = $CURSOR_DIV;
+
+		// 컬럼위치 재정렬
+		// reset_type 이 있을경우 line_ins.end값 무시
+		if(typeof this.cursor_column_reset != "function"){
+			editor_cursor.prototype.cursor_column_reset = function(line_end,reset_type){
+				var _this = this;
+
+				if(line_end < _this.COLUMN && !reset_type){
+					var left = (line_end-1) * _this.font_width;
+				}else{
+					var left = (_this.COLUMN-1) * _this.font_width;
+				}
+				_this.$CURSOR_DIV.css("left",left+"px");
 			}
 		}
+		// 일반모드에 커서위치 잡기
+		if(typeof this.set_normal_cursor != "function"){
+			editor_cursor.prototype.set_normal_cursor = function(line_string,lines){
+				var _this = this;
+				var org_length = line_string.length;
+				var new_length = lines.eq(_this.ROW+1).html().replace(/(&nbsp;|&amp;)/g," ").length;
 
+				var diff_len = new_length - org_length;
+				_this.COLUMN = _this.COLUMN + diff_len;
+
+			}
+		}
 		// 입력 모드에 커서위치 잡기
 		if(typeof this.set_insert_cursor != "function"){
-			editor_line.prototype.set_insert_cursor = function(line,column){
+			editor_cursor.prototype.set_insert_cursor = function(line){
+				var _this = this;
 
 				//var orig_st = line.html().replace(/&nbsp;/g," ");
 				var orig_st = editorservice.rhtmlspecialchars(line.html(),true);
-				var pre_string  = orig_st.substr(0,column-1);
-				var next_string = orig_st.substring(column-1,orig_st.length);
+				var pre_string  = orig_st.substr(0,_this.COLUMN-1);
+				var next_string = orig_st.substring(_this.COLUMN-1,orig_st.length);
 
 				var return_text = pre_string+"<caret>caret</caret>"+next_string;
 				//return_text = return_text.replace(/ /g,"&nbsp;");
@@ -480,10 +497,6 @@ superlucky.service('editorservice',function(){
 
 			}
 		}
-
-	}
-	// Class 정의 (블럭클레스)
-	function editor_block(){
 	}
 
 	// 인스턴스 생성
@@ -492,8 +505,6 @@ superlucky.service('editorservice',function(){
 
 	$scope.key_press = function(event){
 		var keyCode = editorPann.keycode(event);
-
-		
 		editorPann.key_fun(keyCode);
 	}
 	$scope.key_down = function(event){
