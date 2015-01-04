@@ -4,13 +4,14 @@
 </div>
 
 	<!--ng-blur='key_blur($event)'-->
-<input type='text' id='editor_target' ng-model='keytarget'   ng-keypress='key_press($event)'  class="hidden_box" autocomplete='off' ng-blur='key_blur($event)'>
+	<!--ng-keypress='key_press($event)'-->
+<input type='text' id='editor_target' ng-model='keytarget'   ng-keydown="key_down($event)"   class="hidden_box" autocomplete='off' ng-blur='key_blur($event)'>
 
 <!-- TYPING AREA -->
-<div style="width:2000px;">
+<div id="editor_pann">
 	<div id="editor_num_area">
 	</div>
-	<div id="editor_area"  ng-keydown="key_down($event)" ng-blur='key_blur($event)' spellcheck='false'>
+	<div id="editor_area"  ng-keydown="key_down($event)" ng-blur='key_blur($event)' spellcheck='false' style="outline:none;">
 		<div style="position:relative;"><div class="editor_cursor">&nbsp;</div></div>
 	</div>
 </div>

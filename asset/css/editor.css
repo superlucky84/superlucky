@@ -10,6 +10,11 @@
 	src: local('Ubuntu Mono'), local('UbuntuMono-Regular'), url('..fonts/ViZhet7Ak-LRXZMXzuAfkY4P5ICox8Kq3LLUNMylGO4.woff2') format('woff2'), url('..fonts/ViZhet7Ak-LRXZMXzuAfkYbN6UDyHWBl620a-IRfuBk.woff') format('woff');
 }*/
 
+#editor_pann{
+	width:1500px;
+	/*border:1px solid red;*/
+	overflow-y:scroll;
+}
 
 #editor_area{
 	font-family:courier New,courier;
