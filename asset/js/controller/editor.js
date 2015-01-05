@@ -371,6 +371,25 @@ superlucky.service('editorservice',function(){
 							_this.START_ROW = 1;
 							angular.element("#editor_pann")[0].scrollTop=0;
 					}
+					// 마지막 줄로 이동
+					else if('G' == keyChar){
+							_this.$DIV.find("div").eq(_this.cur_ins.ROW+1).removeClass("linehigh");
+							_this.cur_ins.ROW = _this.TOTAL_ROW;
+							_this.$DIV.find("div").eq(_this.cur_ins.ROW+1).addClass("linehigh");
+
+							// 라인분석
+							_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
+							// 커서위치 재정렬
+							_this.cur_ins.cursor_column_reset(_this.line_ins.end);
+
+							var top = (_this.cur_ins.ROW-1) * 16;
+							_this.$DIV.find(".editor_cursor").css("top",top+"px");
+
+							// 판을 마지막으로 이동
+							_this.START_ROW = _this.TOTAL_ROW - _this.PANN_ROW;
+							var move_pann = (_this.START_ROW-1) * _this.font_height;
+							angular.element("#editor_pann")[0].scrollTop=move_pann;
+					}
 					// 줄삭제
 					else if('dd' == _this.queue_get(2).join('')){
 						_this.$DIV.find("div").eq(_this.cur_ins.ROW+1).remove();
@@ -424,6 +443,24 @@ superlucky.service('editorservice',function(){
 						// 커서위치 재정렬
 						_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 					}
+					// 판의 처음으로 이동
+					else if("H" == keyChar){
+						_this.cur_ins.ROW = _this.START_ROW;
+						var top = (_this.cur_ins.ROW-1) * 16;
+						_this.$DIV.find(".editor_cursor").css("top",top+"px");
+					}
+					// 판의 중간으로 이동
+					else if("M" == keyChar){
+						_this.cur_ins.ROW = _this.START_ROW + Math.floor(_this.PANN_ROW/2);
+						var top = (_this.cur_ins.ROW-2) * 16;
+						_this.$DIV.find(".editor_cursor").css("top",top+"px");
+					}
+					// 판의 마지막으로 이동
+					else if("L" == keyChar){
+						_this.cur_ins.ROW = _this.START_ROW + _this.PANN_ROW;
+						var top = (_this.cur_ins.ROW-2) * 16;
+						_this.$DIV.find(".editor_cursor").css("top",top+"px");
+					}
 					// 왼쪽
 					else if("h" == keyChar){
 						if(_this.cur_ins.COLUMN > 1){
@@ -451,6 +488,16 @@ superlucky.service('editorservice',function(){
 						if(_this.cur_ins.ROW <= _this.TOTAL_ROW){
 							_this.cur_ins.ROW++;
 
+
+
+							if( (_this.START_ROW + _this.PANN_ROW) <= _this.cur_ins.ROW){
+								_this.START_ROW = (_this.cur_ins.ROW+1) - _this.PANN_ROW;
+
+
+								var move_pann = (_this.START_ROW-1) * _this.font_height;
+								angular.element("#editor_pann")[0].scrollTop=move_pann;
+							}
+
 							_this.$DIV.find("div").eq(_this.cur_ins.ROW).removeClass("linehigh");
 							_this.$DIV.find("div").eq(_this.cur_ins.ROW+1).addClass("linehigh");
 
@@ -467,6 +514,13 @@ superlucky.service('editorservice',function(){
 					else if("k" == keyChar){
 						if(_this.cur_ins.ROW > 1){
 							_this.cur_ins.ROW--;
+
+							if( _this.START_ROW > _this.cur_ins.ROW){
+								_this.START_ROW = _this.cur_ins.ROW;
+
+								var move_pann = (_this.START_ROW-1) * _this.font_height;
+								angular.element("#editor_pann")[0].scrollTop=move_pann;
+							}
 
 							_this.$DIV.find("div").eq(_this.cur_ins.ROW+2).removeClass("linehigh");
 							_this.$DIV.find("div").eq(_this.cur_ins.ROW+1).addClass("linehigh");
