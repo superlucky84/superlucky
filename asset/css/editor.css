@@ -54,6 +54,7 @@
 	height:auto;
 	margin:0px;
 	font-family:courier New,courier;
+	word-break:break-all;
 	white-space: pre-wrap;
 	/*border:1px solid red;*/
 }
