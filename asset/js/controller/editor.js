@@ -144,6 +144,7 @@ superlucky.service('editorservice',function(){
 						_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 						_this.$DIV.attr("contenteditable",false);
 
+						_this.cur_ins.cursor_blink();
 						
 						// PANN 높이 고정
 						_this.PANN_HEIGHT = parseInt(window.innerHeight-130);
@@ -179,7 +180,10 @@ superlucky.service('editorservice',function(){
 					//_this.$DIV.find(".editor_cursor").css("width","1px");
 
 					document.getElementById("editor_area").focus();
-					_this.$DIV.find(".editor_cursor").hide();
+
+					// 커서 숨기기
+					clearInterval(_this.cur_ins.cursor_interval);
+					_this.cur_ins.$CURSOR_DIV.hide();
 
 					// 디자인 모드 변경시 문자 안들어 가도록 함
 					editorPann.event_memory.preventDefault();
@@ -202,7 +206,6 @@ superlucky.service('editorservice',function(){
 					//_this.$DIV.find(".editor_cursor").css("width","10px");
 
 					document.getElementById("editor_target").focus();
-					_this.$DIV.find(".editor_cursor").show();
 
 					// 일반모드에 커서위치 잡기
 					_this.cur_ins.set_normal_cursor(_this.line_ins.line_string,_this.$DIV.find("div"));
@@ -213,6 +216,10 @@ superlucky.service('editorservice',function(){
 
 					// 컬럼리셋
 					_this.cur_ins.cursor_column_reset(_this.line_ins.end);
+					
+					// 커서 출현시키기
+					_this.cur_ins.$CURSOR_DIV.show();
+					_this.cur_ins.cursor_blink();
 
 
 				}
@@ -226,6 +233,7 @@ superlucky.service('editorservice',function(){
 		if(typeof this.key_fun != "function"){
 			editor_pann.prototype.key_fun = function(keyCode,keyChar,ctrlKey){
 				var _this = this;
+
 
 				// 큐에 넣기
 				//_this.queue_insert(String.fromCharCode(keyCode));
@@ -259,6 +267,9 @@ superlucky.service('editorservice',function(){
 				}
 				// 일반모드일때 바인딩
 				else if(_this.MODE=="NORMAL"){
+
+					_this.cur_ins.$CURSOR_DIV.show();
+					clearInterval(_this.cur_ins.cursor_interval);
 
 					// 한페이지 뒤로
 					if(ctrlKey && "f" == keyChar){
@@ -371,6 +382,7 @@ superlucky.service('editorservice',function(){
 							// 판을 처음으로 이동
 							_this.START_ROW = 1;
 							angular.element("#editor_pann")[0].scrollTop=0;
+
 					}
 					// 마지막 줄로 이동
 					else if('G' == keyChar){
@@ -449,18 +461,27 @@ superlucky.service('editorservice',function(){
 						_this.cur_ins.ROW = _this.START_ROW;
 						var top = (_this.cur_ins.ROW-1) * 16;
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
+
+						// 라인분석
+						_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 					}
 					// 판의 중간으로 이동
 					else if("M" == keyChar){
 						_this.cur_ins.ROW = _this.START_ROW + Math.floor(_this.PANN_ROW/2);
-						var top = (_this.cur_ins.ROW-2) * 16;
+						var top = (_this.cur_ins.ROW-1) * 16;
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
+
+						// 라인분석
+						_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 					}
 					// 판의 마지막으로 이동
 					else if("L" == keyChar){
-						_this.cur_ins.ROW = _this.START_ROW + _this.PANN_ROW;
-						var top = (_this.cur_ins.ROW-2) * 16;
+						_this.cur_ins.ROW = _this.START_ROW + _this.PANN_ROW -1;
+						var top = (_this.cur_ins.ROW-1) * 16;
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
+
+						// 라인분석
+						_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 					}
 					// 왼쪽
 					else if("h" == keyChar){
@@ -594,6 +615,9 @@ superlucky.service('editorservice',function(){
 					//else if([58].indexOf(keyCode) > -1){
 						//_this.mode_change("COMMAND");
 					//}
+
+					_this.cur_ins.cursor_blink();
+
 				}
 			}
 		}
@@ -721,6 +745,23 @@ superlucky.service('editorservice',function(){
 		this.font_width = font_width;
 		// 커서 돔 객체
 		this.$CURSOR_DIV = $CURSOR_DIV;
+		this.cursor_interval = null;
+
+		if(typeof this.cursor_blink != "function"){
+			editor_cursor.prototype.cursor_blink = function(){
+				var _this = this;
+
+				_this.cursor_interval = setInterval(function(){
+					if(_this.$CURSOR_DIV.css('display')=='block'){
+						_this.$CURSOR_DIV.hide();
+
+					}else{
+						_this.$CURSOR_DIV.show();
+					}
+				},350);
+
+			}
+		}
 
 		// 컬럼위치 재정렬
 		// reset_type 이 있을경우 line_ins.end값 무시
