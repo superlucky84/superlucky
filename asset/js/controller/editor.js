@@ -142,7 +142,7 @@ superlucky.service('editorservice',function(){
 						_this.$DIV.find("div").eq(2).addClass("linehigh");
 
 						_this.line_ins.analisys(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
-						_this.$DIV.attr("contenteditable",true);
+						_this.$DIV.attr("contenteditable",false);
 
 						
 						// PANN 높이 고정
@@ -172,7 +172,7 @@ superlucky.service('editorservice',function(){
 				// 입력모드
 				if(TYPE=="INSERT"){
 					console.log("INSERT MODE");
-					//_this.$DIV.attr("contenteditable",true);
+					_this.$DIV.attr("contenteditable",true);
 					_this.MODE = "INSERT";
 
 
@@ -181,17 +181,18 @@ superlucky.service('editorservice',function(){
 					document.getElementById("editor_area").focus();
 					_this.$DIV.find(".editor_cursor").hide();
 
+					// 디자인 모드 변경시 문자 안들어 가도록 함
+					editorPann.event_memory.preventDefault();
+
 					// 입력 모드에 커서위치 잡기
 					_this.cur_ins.set_insert_cursor(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 
-					// 디자인 모드 변경시 문자 안들어 가도록 함
-					editorPann.event_memory.preventDefault();
 
 				}
 				// 일반모드
 				else if(TYPE=="NORMAL"){
 					console.log("NORMAL MODE");
-					//_this.$DIV.attr("contenteditable",false);
+					_this.$DIV.attr("contenteditable",false);
 					_this.MODE = "NORMAL";
 					$scope.keytarget = "";
 
@@ -799,16 +800,29 @@ superlucky.service('editorservice',function(){
 		}
 	}
 	$scope.key_blur = function(event){
-		console.log(editorPann.MODE);
 		if(editorPann.MODE == "NORMAL"){
-			document.getElementById("editor_target").focus();
+			//document.getElementById("editor_target").focus();
+			//$("#editor_target").focus();
+
+			setTimeout(function() {
+				$("#editor_target").focus();
+			}, 0);
+
 		}
 		else if(editorPann.MODE == "INSERT"){
-			document.getElementById("editor_area").focus();
+			//document.getElementById("editor_area").focus();
+			//$("#editor_area").focus();
+			setTimeout(function() {
+				$("#editor_area").focus();
+			}, 0);
 		}
 	}
 	document.getElementById("editor_target").focus();
 
+});
+
+$("body").bind('focus',function(){
+	document.getElementById("editor_target").focus();
 });
 
 $(document).keyup(function (e) {

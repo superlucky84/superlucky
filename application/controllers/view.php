@@ -28,7 +28,7 @@ class View extends CI_Controller {
 	public function main(){
 
 		$this->load->view('main.html',array(
-			'version' => date("Ymd"),
+			'version' => date("Ymd")."-15",
 			'user_id' => $this->session->userdata('id')
 		));
 	}
