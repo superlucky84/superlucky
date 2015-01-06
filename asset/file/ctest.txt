@@ -9,7 +9,6 @@
 /*global window, navigator, document, importScripts, setTimeout, opera */
 
 var requirejs, require, define;
-a   b   s
 (function (global) {
     var req, s, head, baseElement, dataMain, src,
         interactiveScript, currentlyAddingScript, mainScript, subPath,
@@ -1855,7 +1854,7 @@ a   b   s
             //that do not match the behavior of all other browsers with
             //addEventListener support, which fire the onload event for a
             //script right after the script execution. See:
-            //https://connect.microsoft.com/IE/feedback/details/648057/script-onload-event-is-not-fired-immediately-after-script-execution
+            //https://connect.microsoft.com/IE/feedback/details/6
             //UNFORTUNATELY Opera implements attachEvent but does not follow the script
             //script execution mode.
             if (node.attachEvent &&

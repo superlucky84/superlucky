@@ -11,7 +11,7 @@
 }*/
 
 #editor_pann{
-	width:1500px;
+	width:1200px;
 	/*border:1px solid red;*/
 	overflow-y:scroll;
 }
@@ -50,7 +50,12 @@
 }
 
 .editor_line{
-	height:16px;
+	min-height:16px;
+	height:auto;
+	margin:0px;
+	font-family:courier New,courier;
+	white-space: pre-wrap;
+	/*border:1px solid red;*/
 }
 .editor_cursor{
 	position:absolute;
