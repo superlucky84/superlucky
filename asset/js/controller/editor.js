@@ -453,14 +453,14 @@ superlucky.service('editorservice',function(){
 					}
 					// 한글자 삭제
 					else if("x" == keyChar){
-						var orig_st = _this.$DIV.find("pre").eq(_this.cur_ins.ROW).html().replace(/&nbsp;/g," ");
-						var pre_string  = orig_st.substr(0,_this.cur_ins.COLUMN-2);
+						var orig_st = _this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).html().replace(/&nbsp;/g," ");
+						var pre_string  = orig_st.substr(0,_this.cur_ins.COLUMN-1);
 						var next_string = orig_st.substring(_this.cur_ins.COLUMN,orig_st.length);
 						var return_text = pre_string+next_string;
 						return_text = return_text.replace(/ /g,"&nbsp;");
-						_this.$DIV.find("pre").eq(_this.cur_ins.ROW).html(return_text);
+						_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).html(return_text);
 						// 커서위치 재정렬
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW));
+						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 					}
 					// 판의 처음으로 이동
 					else if("H" == keyChar){
