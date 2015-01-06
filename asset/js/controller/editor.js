@@ -191,6 +191,10 @@ superlucky.service('editorservice',function(){
 					_this.cur_ins.set_insert_cursor(_this.$DIV.find("div").eq(_this.cur_ins.ROW+1));
 
 
+					// 판 scrollTop
+					han_px = (_this.START_ROW-1) * _this.font_height;
+					angular.element("#editor_pann")[0].scrollTop=han_px;
+
 				}
 				// 일반모드
 				else if(TYPE=="NORMAL"){
