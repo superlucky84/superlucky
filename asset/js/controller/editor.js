@@ -176,14 +176,13 @@ superlucky.service('editorservice',function(){
 					_this.$DIV.attr("contenteditable",true);
 					_this.MODE = "INSERT";
 
+					// 커서 숨기기
+					_this.cur_ins.cursor_blink_stop('hide');
 
 					//_this.$DIV.find(".editor_cursor").css("width","1px");
 
 					document.getElementById("editor_area").focus();
 
-					// 커서 숨기기
-					clearInterval(_this.cur_ins.cursor_interval);
-					_this.cur_ins.$CURSOR_DIV.hide();
 
 					// 디자인 모드 변경시 문자 안들어 가도록 함
 					editorPann.event_memory.preventDefault();
@@ -218,7 +217,6 @@ superlucky.service('editorservice',function(){
 					_this.cur_ins.cursor_column_reset(_this.line_ins.end);
 					
 					// 커서 출현시키기
-					_this.cur_ins.$CURSOR_DIV.show();
 					_this.cur_ins.cursor_blink();
 
 
@@ -268,8 +266,8 @@ superlucky.service('editorservice',function(){
 				// 일반모드일때 바인딩
 				else if(_this.MODE=="NORMAL"){
 
+					//_this.cur_ins.cursor_blink_stop('show');
 					_this.cur_ins.$CURSOR_DIV.show();
-					clearInterval(_this.cur_ins.cursor_interval);
 
 					// 한페이지 뒤로
 					if(ctrlKey && "f" == keyChar){
@@ -616,7 +614,7 @@ superlucky.service('editorservice',function(){
 						//_this.mode_change("COMMAND");
 					//}
 
-					_this.cur_ins.cursor_blink();
+					//_this.cur_ins.cursor_blink();
 
 				}
 			}
@@ -750,7 +748,7 @@ superlucky.service('editorservice',function(){
 		if(typeof this.cursor_blink != "function"){
 			editor_cursor.prototype.cursor_blink = function(){
 				var _this = this;
-
+				_this.$CURSOR_DIV.show();
 				_this.cursor_interval = setInterval(function(){
 					if(_this.$CURSOR_DIV.css('display')=='block'){
 						_this.$CURSOR_DIV.hide();
@@ -759,7 +757,19 @@ superlucky.service('editorservice',function(){
 						_this.$CURSOR_DIV.show();
 					}
 				},350);
+			}
+		}
+		if(typeof this.cursor_blink_stop != "function"){
+			editor_cursor.prototype.cursor_blink_stop = function(show_hide){
+				var _this = this;
 
+				if('show'==show_hide){
+					_this.$CURSOR_DIV.show();
+				}else{
+					_this.$CURSOR_DIV.hide();
+				}
+				clearInterval(_this.cursor_interval);
+				_this.cursor_interval = null;
 			}
 		}
 
