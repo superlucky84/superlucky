@@ -418,9 +418,13 @@ superlucky.service('editorservice',function(){
 					}
 					// 줄삭제
 					else if('dd' == _this.queue_get(2).join('')){
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW));
+
+						_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).remove();
+						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.TOTAL_ROW--;
 						// queue 비우기
-						_this.common_queue = [];
+						_this.common_queue = []
+
 					}
 					// 모드변경
 					else if(["A","a","I","O","i","o"].indexOf(keyChar) > -1){
