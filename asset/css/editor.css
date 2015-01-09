@@ -49,7 +49,17 @@
 	float:right;
 }
 
-.editor_line{
+pre.editor_line{
+	min-height:15px;
+	height:auto;
+	width:100%;
+	margin:0px;
+	font-family:courier New,courier;
+	word-break:break-all;
+	white-space: pre-wrap;
+	/*border:1px solid red;*/
+}
+div.editor_line{
 	min-height:15px;
 	height:auto;
 	width:100%;

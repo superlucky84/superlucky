@@ -237,7 +237,6 @@ superlucky.service('editorservice',function(){
 				var num = 0;
 				for(line_key in _this.PANN){
 					var line_org = _this.PANN[line_key];
-					//var line = line_org.replace(/[\&]/g,"&amp;").replace(/[ ]/g,"&nbsp;");
 					var line = editorservice.htmlspecialchars(line_org);
 					if(!line){
 						line = "&nbsp;";
@@ -340,7 +339,6 @@ superlucky.service('editorservice',function(){
 					// 입력 모드에 커서위치 잡기
 					_this.cur_ins.set_insert_cursor(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
-
 					// 판 scrollTop
 					var top = _this.row_to_px(_this.START_ROW);
 					angular.element("#editor_pann")[0].scrollTop=top;
@@ -370,7 +368,6 @@ superlucky.service('editorservice',function(){
 					console.log(_this.cur_ins.COLUMN);
 
 					// 라인 업데이트
-					//_this.PANN[_this.cur_ins.ROW-1] = _this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).html().replace(/&nbsp;/g," ");
 					_this.PANN[_this.cur_ins.ROW-1] = editorservice.rhtmlspecialchars(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).html());
 					//라인 바꼈을 경우에만 해줌
 					if(_this.LINE_CHANGE){
@@ -1059,7 +1056,9 @@ superlucky.service('editorservice',function(){
 				var _this = this;
 
 				//var orig_st = line.html().replace(/&nbsp;/g," ");
-				var orig_st = editorservice.rhtmlspecialchars(line.html(),true);
+				console.log(line.html());
+				var orig_st = editorservice.rhtmlspecialchars(line.html().replace(/&lt;/g,"<").replace(/&gt;/g,">"),true);
+				console.log(orig_st);
 				var pre_string  = orig_st.substr(0,_this.COLUMN-1);
 				var next_string = orig_st.substring(_this.COLUMN-1,orig_st.length);
 
