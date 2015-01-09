@@ -288,13 +288,13 @@ superlucky.service('editorservice',function(){
 				var _this = this;
 
 				// 판 넓이 계산
-				_this.PANN_WIDTH = window.innerWidth-15;
+				_this.PANN_WIDTH = window.innerWidth-17;
 				angular.element("#editor_pann").css("width",_this.PANN_WIDTH+"px");
 
 				// 라인 넓이 계산
 				_this.PANN_NUM_WIDTH = String(_this.TOTAL_ROW).length * _this.font_width;
 
-				_this.PANN_EDITOR_WIDTH = _this.PANN_WIDTH - (_this.PANN_NUM_WIDTH + 16);
+				_this.PANN_EDITOR_WIDTH = _this.PANN_WIDTH - (_this.PANN_NUM_WIDTH + 17);
 
 				_this.PANN_EDITOR_WIDTH_COLUMN = Math.floor(_this.PANN_EDITOR_WIDTH / _this.font_width);
 
@@ -309,6 +309,7 @@ superlucky.service('editorservice',function(){
 				var _this = this;
 				_this.pann_calcul_width();
 				_this.pann_calcul_height();
+				_this.cur_ins.$CURSOR_DIV = _this.$DIV.find(".editor_cursor");
 
 			}
 		}
