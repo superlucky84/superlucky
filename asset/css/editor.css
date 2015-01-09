@@ -11,7 +11,7 @@
 }*/
 
 #editor_pann{
-	width:1200px;
+	/*min-width:768px;*/
 	/*border:1px solid red;*/
 	overflow-y:scroll;
 }
@@ -23,7 +23,7 @@
 	color:gray;
 	float:left;
 	/*border:1px solid blue;*/
-	max-width:1100px;
+	/*max-width:1100px;*/
 }
 #editor_num_area{
 	font-family:courier New,courier;
@@ -50,8 +50,9 @@
 }
 
 .editor_line{
-	min-height:16px;
+	min-height:15px;
 	height:auto;
+	width:100%;
 	margin:0px;
 	font-family:courier New,courier;
 	word-break:break-all;
