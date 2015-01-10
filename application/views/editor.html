@@ -3,20 +3,17 @@
 <div style="height:10px">
 </div>
 
-	<!--ng-blur='key_blur($event)'-->
-	<!--ng-keypress='key_press($event)'-->
-<input type='text' id='editor_target' ng-model='keytarget'   ng-keydown="key_down($event)"   class="hidden_box" autocomplete='off' ng-blur='key_blur($event)'>
+<!--class="hidden_box"-->
+<input type='text' id='editor_target' ng-model='keytarget'   ng-keydown="key_down($event)" ng-blur="editor_blur($event)" class="hidden_box"   autocomplete='off' >
 
 <!-- TYPING AREA -->
 <div id="editor_pann">
 	<div id="editor_num_area">
 	</div>
-	<div id="editor_area" ng-esc="key_esc($event)"  ng-keydown="key_down($event)" ng-blur='key_blur($event)' spellcheck='false' style="outline:none;">
+	<div id="editor_area" ng-esc="key_esc($event)"  ng-keydown="key_down($event)" ng-click='key_target($event)' spellcheck='false' style="outline:none;" ng-blur="key_blur($event)">
 		<div style="position:relative;"><div class="editor_cursor">&nbsp;</div></div>
 	</div>
 </div>
-
-
 
 <!-- DIALOG -->
 <div ng-controller="editorDialogController" style="display:none">

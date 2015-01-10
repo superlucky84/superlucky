@@ -848,11 +848,6 @@ superlucky.service('editorservice',function(){
 					// 되돌리기
 					else if("u" == keyChar){
 
-						//document.getElementById("editor_area").focus();
-						document.execCommand('undo', false, null);
-						document.execCommand('undo', false, null);
-						document.execCommand('undo', false, null);
-						//document.getElementById("editor_target").focus();
 					}
 					//else if([58].indexOf(keyCode) > -1){
 						//_this.mode_change("COMMAND");
@@ -1111,23 +1106,25 @@ superlucky.service('editorservice',function(){
 			event.preventDefault();
 		}
 	}
-	$scope.key_blur = function(event){
+	$scope.editor_blur = function(event){
 		if(editorPann.MODE == "NORMAL"){
-			//document.getElementById("editor_target").focus();
-			//$("#editor_target").focus();
-
 			setTimeout(function() {
-				$("#editor_target").focus();
-			}, 0);
-
-		}
-		else if(editorPann.MODE == "INSERT"){
-			//document.getElementById("editor_area").focus();
-			//$("#editor_area").focus();
-			setTimeout(function() {
-				$("#editor_area").focus();
+				angular.element(".editor_cursor").css('color','red').html("FOCUS_OUT");
 			}, 0);
 		}
+	}
+	$scope.key_blur = function(event){
+		if(editorPann.MODE == "INSERT"){
+			setTimeout(function() {
+				editorPann.mode_change("NORMAL");
+			}, 0);
+		}
+	}
+	$scope.key_target = function(event){
+		setTimeout(function() {
+			$("#editor_target").focus();
+			angular.element(".editor_cursor").html("&nbsp;");
+		}, 0);
 	}
 	document.getElementById("editor_target").focus();
 

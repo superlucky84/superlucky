@@ -19,6 +19,7 @@
 <script src="/asset/js/angular-summernote.min.js?v=<?php echo $version?>"></script>
 <script src="/asset/js/angular-route.js?v=<?php echo $version?>"></script>
 <script src="/asset/js/angular-animate.js?v=<?php echo $version?>"></script>
+<script src="/asset/js/socket.io.js"></script>
 
 
 <link rel="stylesheet" type="text/css" href="/asset/css/animate.css?v=<?php echo $version?>" />
@@ -40,6 +41,19 @@
 				if(event.which === 27) {
 					scope.$apply(function (){
 						scope.$eval(attrs.ngEsc);
+					});
+					event.preventDefault();
+				}
+			});
+		};
+	});
+	// enter Event
+	superlucky.directive('ngEnter', function () {
+		return function (scope, element, attrs) {
+			element.bind("keydown keypress", function (event) {
+				if(event.which === 13) {
+					scope.$apply(function (){
+						scope.$eval(attrs.ngEnter);
 					});
 					event.preventDefault();
 				}
@@ -84,6 +98,24 @@
       </div>
     </nav>
 
+	<div style="z-index:1000;position:relative;float:right;width:300px;margin-right:20px;" ng-controller="chatController">
+		<div style="position:absolute;width:300px;top:65px">
+			  <accordion>
+				<accordion-group is-open="true">
+					<accordion-heading>
+						CHATTING!  -    USER : {{ client_cnt}}
+					</accordion-heading>
+					<dl id="jb_c"  style="height:160px;overflow-y:scroll;background-color:#000000;margin-bottom:6px;">
+						<dd ng-repeat=" message in chatting">
+						<h6>&nbsp;&nbsp;{{ message.id }} : {{ message.line }}</h6>
+						</dd>
+					</dl>                   
+					<input id="message" ng-enter="send_msg($event)" class="form-control" style="display:initial;height:23px;width:225px;padding:0 0 0 5px;">
+					<button id="jb" ng-click="send_msg($event)" type="button" class="btn btn-xs btn-primary" style="line-height:initial">send</button>
+				</accordion-group>
+			  </accordion>
+		</div>
+	</div>
 
     <!-- Begin page content -->
     <div class="container mainpage">
@@ -98,11 +130,47 @@
     </footer>
 
 
+
 <script src="/asset/js/router.js"></script>
 <script src="/asset/js/controller/main.js?v=<?php echo $version?>"></script>
 <script src="/asset/js/controller/typing.js?v=<?php echo $version?>"></script>
 <script src="/asset/js/controller/board.js?v=<?php echo $version?>"></script>
 <script src="/asset/js/controller/editor.js?v=<?php echo $version?>"></script>
 <script src="/asset/js/controller/logout.js?v=<?php echo $version?>"></script>
+<script>
+
+superlucky.controller('chatController', function ($scope,$http,$modal) {
+
+	$scope.chatting = [];
+
+	var socket = io.connect('http://104.236.113.81:50000');
+	socket.on('message', function(data) {
+		$scope.chatting.push(data);
+		$scope.$apply();
+		var j_content =  angular.element("#jb_c")[0];
+		j_content.scrollTop = j_content.scrollHeight;
+	});
+	socket.on('clientcnt', function(data) {
+		$scope.client_cnt = data;
+		$scope.$apply();
+	});
+	$scope.send_msg = function(event){
+		socket.emit('message',{
+			id : superlucky.user_id,
+			line: angular.element('#message').val(),
+			data: new Date().toUTCString()
+		});
+		socket.emit('clientcnt');
+		angular.element('#message').val('');
+	}
+	$scope.$on('$destroy',function(){
+		//angular.element($window).unbind('resize');
+		socket.emit('clientcnt');
+	});
+
+	socket.emit('clientcnt');
+
+});
+</script>
 </body>
 </html>
