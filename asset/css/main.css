@@ -4,8 +4,7 @@ html {
   position: relative;
   min-height: 100%;
 }
-body {
-  /* Margin bottom by footer height */
+body { /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
 .footer {
@@ -56,4 +55,14 @@ code {
   color: #ffffff;
   background-color: black;
   border-color: transparent;
+}
+
+.well-lg {
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.strike{
+	color:black;
+	text-decoration: line-through;
 }

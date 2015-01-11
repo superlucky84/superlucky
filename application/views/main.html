@@ -99,21 +99,42 @@
     </nav>
 
 	<div style="z-index:1000;position:relative;float:right;width:300px;margin-right:20px;" ng-controller="chatController">
-		<div style="position:absolute;width:300px;top:65px">
-			  <accordion>
-				<accordion-group is-open="true">
-					<accordion-heading>
-						CHATTING!  -    USER : {{ client_cnt}}
-					</accordion-heading>
-					<dl id="jb_c"  style="height:160px;overflow-y:scroll;background-color:#000000;margin-bottom:6px;">
-						<dd ng-repeat=" message in chatting">
-						<h6>&nbsp;&nbsp;{{ message.id }} : {{ message.line }}</h6>
-						</dd>
-					</dl>                   
-					<input id="message" ng-enter="send_msg($event)" class="form-control" style="display:initial;height:23px;width:225px;padding:0 0 0 5px;">
-					<button id="jb" ng-click="send_msg($event)" type="button" class="btn btn-xs btn-primary" style="line-height:initial">send</button>
-				</accordion-group>
-			  </accordion>
+		<div style="position:absolute;width:100%;top:65px">
+
+			<button class="btn btn-primary btn-sm"  style="position:absolute;margin-left:260px;margin-top:10px" ng-click="isCollapsed = !isCollapsed" ng-show="isCollapsed">
+				{{ client_cnt }}
+			</button>
+			<div collapse="isCollapsed">
+				<div class="well well-lg">
+
+					<button class="btn btn-default btn-sm" style="float:right" ng-hide="isCollapsed" ng-click="isCollapsed = !isCollapsed">
+						<b>-</b>
+					</button>
+					<tabset style="width:280px">
+					<tab heading="Connect User">
+						<dl id="jb_c"  style="height:160px;overflow-y:scroll;background-color:#222222;margin-bottom:6px;">
+								<dd ng-repeat="user in user_stat">
+								<h6 ng-class="{ strike : !user.login }">&nbsp;&nbsp;{{ user.id }} : {{ user.login }} </h6>
+								</dd>
+						</dl>
+					</tab>
+					<tab heading="Chatting" active="true">
+						<dl id="jb_c"  style="height:160px;overflow-y:scroll;background-color:#222222;margin-bottom:6px;">
+							<dd ng-repeat=" message in chatting">
+							<h6>&nbsp;&nbsp;{{ message.id }} : {{ message.line }}</h6>
+							</dd>
+						</dl>                   
+						<input id="message" ng-enter="send_msg($event)" class="form-control" style="display:initial;height:23px;width:238px;padding:0 0 0 5px;">
+						<button id="jb" ng-click="send_msg($event)" type="button" class="btn btn-xs btn-primary" style="line-height:initial">send</button>
+					</tab>
+					</tabset>
+
+
+
+
+				</div> 
+			</div>
+
 		</div>
 	</div>
 
@@ -151,7 +172,14 @@ superlucky.controller('chatController', function ($scope,$http,$modal) {
 		j_content.scrollTop = j_content.scrollHeight;
 	});
 	socket.on('clientcnt', function(data) {
-		$scope.client_cnt = data;
+
+		$scope.user_stat = data;
+
+		var connect_user = data.filter(function(item){
+			 if(item.login) return true;
+		});
+
+		$scope.client_cnt = connect_user.length;
 		$scope.$apply();
 	});
 	$scope.send_msg = function(event){
@@ -163,10 +191,6 @@ superlucky.controller('chatController', function ($scope,$http,$modal) {
 		socket.emit('clientcnt');
 		angular.element('#message').val('');
 	}
-	$scope.$on('$destroy',function(){
-		//angular.element($window).unbind('resize');
-		socket.emit('clientcnt');
-	});
 
 	socket.emit('clientcnt');
 

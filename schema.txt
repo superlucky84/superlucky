@@ -8,7 +8,7 @@ CREATE TABLE `users` (
   `title` varchar(200) NOT NULL DEFAULT '',
   PRIMARY KEY (`user_seq`),
   UNIQUE KEY `ix_id` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
 CREATE TABLE `board` (
   `board_seq` int(11) NOT NULL AUTO_INCREMENT,
@@ -22,5 +22,15 @@ CREATE TABLE `board` (
   PRIMARY KEY (`board_seq`),
   KEY `ix_board_category` (`category`),
   KEY `ix_board_regdate` (`regdate`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS  `cisessions` (
+	session_id varchar(40) DEFAULT '0' NOT NULL,
+	ip_address varchar(16) DEFAULT '0' NOT NULL,
+	user_agent varchar(120) NOT NULL,
+	last_activity int(10) unsigned DEFAULT 0 NOT NULL,
+	user_data text NOT NULL,
+	PRIMARY KEY (session_id),
+	KEY `last_activity_idx` (`last_activity`)
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 
