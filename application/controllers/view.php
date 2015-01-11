@@ -55,4 +55,10 @@ class View extends CI_Controller {
 		$this->load->view('editor.html');
 	}
 
+	/*
+	 * 채팅 메세지 보낼때 세션유지
+	 */
+	public function chat_session_update(){
+	}
+
 }

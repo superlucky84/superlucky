@@ -172,9 +172,7 @@ superlucky.controller('chatController', function ($scope,$http,$modal) {
 		j_content.scrollTop = j_content.scrollHeight;
 	});
 	socket.on('clientcnt', function(data) {
-
 		$scope.user_stat = data;
-
 		var connect_user = data.filter(function(item){
 			 if(item.login) return true;
 		});
@@ -190,6 +188,13 @@ superlucky.controller('chatController', function ($scope,$http,$modal) {
 		});
 		socket.emit('clientcnt');
 		angular.element('#message').val('');
+
+		$http({ url: '/view/chat_session_update', method: "GET", async:false }).
+		success(function(data){
+		}).
+		error(function(data){
+		});
+
 	}
 
 	socket.emit('clientcnt');
