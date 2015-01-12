@@ -821,7 +821,20 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.COLUMN = _this.line_ins.end;
 						}
 
-						_this.cur_ins.COLUMN = _this.line_ins.move_w("w",_this.cur_ins.COLUMN);
+						var return_column = _this.line_ins.move_w("w",_this.cur_ins.COLUMN);
+						if(return_column=='next_line'){
+
+							if(_this.cur_ins.ROW >= _this.TOTAL_ROW){
+								return false;
+							}
+
+							_this.cur_ins.ROW++;
+							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.cur_ins.COLUMN = _this.line_ins.start;
+							_this.cur_ins.COLUMN = _this.line_ins.move_w("w",_this.cur_ins.COLUMN);
+						}else{
+							_this.cur_ins.COLUMN = return_column;
+						}
 						_this.cursor_column_reset(_this.line_ins.end);
 					}
 					// 한단어 이동(w)
@@ -831,7 +844,20 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.COLUMN = _this.line_ins.end;
 						}
 
-						_this.cur_ins.COLUMN = _this.line_ins.move_w("e",_this.cur_ins.COLUMN);
+						var return_column = _this.line_ins.move_w("e",_this.cur_ins.COLUMN);
+						if(return_column=='next_line'){
+
+							if(_this.cur_ins.ROW >= _this.TOTAL_ROW){
+								return false;
+							}
+
+							_this.cur_ins.ROW++;
+							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.cur_ins.COLUMN = _this.line_ins.start;
+							_this.cur_ins.COLUMN = _this.line_ins.move_w("e",_this.cur_ins.COLUMN);
+						}else{
+							_this.cur_ins.COLUMN = return_column;
+						}
 						_this.cursor_column_reset(_this.line_ins.end);
 					}
 					// 한단어 뒤로(b)
@@ -840,8 +866,18 @@ superlucky.service('editorservice',function(){
 						if(_this.line_ins.end < _this.cur_ins.COLUMN){
 							_this.cur_ins.COLUMN = _this.line_ins.end;
 						}
-
-						_this.cur_ins.COLUMN = _this.line_ins.move_b(_this.cur_ins.COLUMN);
+						var return_column = _this.line_ins.move_b(_this.cur_ins.COLUMN);
+						if(return_column=='prev_line'){
+							if(_this.cur_ins.ROW == 1){
+								return false;
+							}
+							_this.cur_ins.ROW--;
+							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.cur_ins.COLUMN = _this.line_ins.end;
+							_this.cur_ins.COLUMN = _this.line_ins.move_b(_this.cur_ins.COLUMN);
+						}else{
+							_this.cur_ins.COLUMN = return_column;
+						}
 						_this.cursor_column_reset(_this.line_ins.end);
 					}
 
@@ -958,6 +994,9 @@ superlucky.service('editorservice',function(){
 				else if("e" == move_type){
 					var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]|$))/);
 				}
+				if(w_anal==null){
+					return 'next_line';
+				}
 
 				var cursor = start_pos;
 				if(w_anal){
@@ -980,8 +1019,9 @@ superlucky.service('editorservice',function(){
 				var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]|$))/);
 				var cursor = start_pos;
 				if(w_anal){
-
 					cursor = start_pos - w_anal['index']-1;
+				}else{
+					return 'prev_line';
 				}
 				return cursor;
 			}
