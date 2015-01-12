@@ -186,6 +186,7 @@ superlucky.controller('chatController', function ($scope,$http,$modal) {
 			data: new Date().toUTCString()
 		});
 		angular.element('#message').val('');
+		angular.element('#message').focus();
 	}
 
 	socket.emit('set_nickname',superlucky.user_id);
