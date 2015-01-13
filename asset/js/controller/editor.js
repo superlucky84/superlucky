@@ -434,6 +434,26 @@ superlucky.service('editorservice',function(){
 						}
 					}, 0);
 
+
+					if(keyCode==9){
+						var tapnode = document.createTextNode('    ');
+						var carotnode = document.createElement('span');
+						var caretID = '_caret';
+						carotnode.id = caretID;
+						window.getSelection().getRangeAt(0).insertNode(carotnode);
+						window.getSelection().getRangeAt(0).insertNode(tapnode);
+
+						var cc = _this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).find("#_caret")[0];
+						var range = document.createRange();
+						range.selectNode(cc);
+						var selection = window.getSelection();
+						selection.removeAllRanges();
+						selection.addRange(range);
+						range.deleteContents();
+
+					}
+
+
 					/*
 					var orig_st = _this.$DIV.find("div").eq(_this.ROW+1).html().replace(/&nbsp;/g," ");
 					var res = String.fromCharCode(keyCode);
@@ -1108,7 +1128,6 @@ superlucky.service('editorservice',function(){
 				selection.removeAllRanges();
 				selection.addRange(range);
 				range.deleteContents();
-
 			}
 		}
 	}
@@ -1142,6 +1161,10 @@ superlucky.service('editorservice',function(){
 
 		editorPann.key_fun(keyCode,keyChar,event.ctrlKey);
 
+		// 브라우저 기본 이벤트 무시
+		if(editorPann.MODE=="INSERT" && keyCode==9){
+			event.preventDefault();
+		}
 		if(event.ctrlKey){
 			event.preventDefault();
 		}
