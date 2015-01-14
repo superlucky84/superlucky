@@ -474,8 +474,34 @@ superlucky.service('editorservice',function(){
 					//_this.cur_ins.cursor_blink_stop('show');
 					_this.cur_ins.$CURSOR_DIV.show();
 
+					// z + z
+					if("zz"==_this.queue_get(2).join('')){
+						_this.START_ROW = _this.cur_ins.ROW - Math.round(_this.PANN_LINE/2);
+						if(_this.START_ROW < 1){
+							_this.START_ROW = 1;
+						}
+						var top = _this.row_to_px(_this.START_ROW);
+						angular.element("#editor_pann")[0].scrollTop=top;
+					}
+					// z + enter
+					else if(13==keyCode && "z"==_this.queue_get(2).join('').replace(/[^a-z]/g,'')){
+						_this.START_ROW = _this.cur_ins.ROW;
+						var top = _this.row_to_px(_this.START_ROW);
+						angular.element("#editor_pann")[0].scrollTop=top;
+					}
+					// z + -
+					else if(189==keyCode && "z"==_this.queue_get(2).join('').replace(/[^a-z]/g,'')){
+						_this.START_ROW = _this.cur_ins.ROW - _this.PANN_LINE+1;
+
+						if(_this.START_ROW < 1){
+							_this.START_ROW = 1;
+						}
+
+						var top = _this.row_to_px(_this.START_ROW);
+						angular.element("#editor_pann")[0].scrollTop=top;
+					}
 					// 한페이지 뒤로
-					if(ctrlKey && "f" == keyChar){
+					else if(ctrlKey && "f" == keyChar){
 
 						var diff_cur = _this.cur_ins.ROW - _this.START_ROW;
 
