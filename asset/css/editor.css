@@ -80,3 +80,15 @@ div.editor_line{
 	border:0px;
 	background-color:#7e7;
 }
+.editor_visual{
+	position:absolute;
+	width:10px;
+	height:16px;
+	left:0px;
+	top:0px;
+	z-index:1;
+	opacity: 0.5;
+	border:0px;
+	background-color:#7e7;
+	display:none;
+}

@@ -56,8 +56,12 @@ superlucky.service('editorservice',function(){
 
 		// EDITOR NUM 판
 		this.$DIV = angular.element(document.getElementById('editor_area'));
-		// EDITOR 판
-		this.$NUM_DIV = angular.element(document.getElementById('editor_num_area'));
+		// NUM OBJ
+		this.numObj = null;
+		// VISUAL OBJ
+		this.visualObj = null;
+
+
 		// vi모드 (NORMAL, INSERT, COMMAND)
 		this.MODE = "NORMAL";
 		// 전체 행 개수
@@ -70,20 +74,16 @@ superlucky.service('editorservice',function(){
 		this.font_width = 9;
 		// 폰트 높이
 		this.font_height = 15;
-
 		// 일반모드 QUEUE
 		this.common_queue = [];
 		// 이벤트
 		this.event_memory = null;
-
 		// 판 시작라인
 		this.START_ROW = 1;
 		// 현재 판 전체라인 
 		this.PANN_ROW =   1;
-
 		// 현재 판 실제라인 (길어서 두줄 된것까지)
 		this.PANN_LINE = 1;
-
 		// 판 높이 px
 		this.PANN_HEIGHT = 0;
 		// 판 넓이 px
@@ -103,42 +103,6 @@ superlucky.service('editorservice',function(){
 
 
 
-		// 해당 라인의 ROW 구하기
-		if(typeof this.line_to_row != "function"){
-			editor_pann.prototype.line_to_row = function(line){
-				var _this = this;
-				for(var i = line ; i >= 1 ; i--){
-					if(_this.$NUM_DIV.find("[data-accrue='"+i+"']").length > 0){
-						return _this.$NUM_DIV.find("[data-accrue='"+i+"']").data('num');
-					}
-				}
-			}
-		}
-
-		// 해당 Row의 라인 구하기
-		if(typeof this.row_to_line != "function"){
-			editor_pann.prototype.row_to_line = function(row){
-				var _this = this;
-				return parseInt(_this.$NUM_DIV.find("[data-num='"+row+"']").data('accrue'));
-			}
-		}
-
-
-		// ROW 의 px 반환
-		if(typeof this.row_to_px != "function"){
-			editor_pann.prototype.row_to_px = function(ROW){
-				var _this = this;
-				return parseInt(_this.$NUM_DIV.find("[data-num='"+ROW+"']").data('accrue_px'));
-			}
-		}
-
-		// line 의 px 반환
-		if(typeof this.line_to_px != "function"){
-			editor_pann.prototype.line_to_px = function(line){
-				var _this = this;
-				return (line-1) * _this.font_height;
-			}
-		}
 
 		// 컬럼위치 재정렬
 		// reset_type 이 있을경우 line_ins.end값 무시
@@ -153,7 +117,7 @@ superlucky.service('editorservice',function(){
 					cal_column = _this.cur_ins.COLUMN;
 				}
 
-				var top = _this.row_to_px(_this.cur_ins.ROW);
+				var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 
 				var line_cnt = Math.ceil(cal_column / _this.PANN_EDITOR_WIDTH_COLUMN);
 				top = top + ((line_cnt-1)*_this.font_height);
@@ -200,6 +164,9 @@ superlucky.service('editorservice',function(){
 
 						// TOTAL_ROk
 						_this.TOTAL_ROW = _this.PANN.length;
+						
+						// 넘버 클래스 인스턴스 생성
+						_this.numObj = new number_line(_this.font_height);
 
 						// 판 넓이계산
 						_this.pann_calcul_width();
@@ -230,7 +197,9 @@ superlucky.service('editorservice',function(){
 				var _this = this;
 
 				_this.$DIV.html('<div style="position:relative;"><div class="editor_cursor">&nbsp;</div></div>');
-				_this.$NUM_DIV.html('');
+				_this.$DIV.append('<div style="position:relative;"><div class="editor_visual">&nbsp;</div></div>');
+				//_this.$NUM_DIV.html('');
+				_this.numObj.$NUM_DIV.html('');
 
 				var accrue = 1;
 				var accrue_px = 0;
@@ -265,7 +234,9 @@ superlucky.service('editorservice',function(){
 
 					accrue_px += h_px;
 
-					_this.$NUM_DIV.append($NUM_SPAN);
+					//_this.$NUM_DIV.append($NUM_SPAN);
+					_this.numObj.$NUM_DIV.append($NUM_SPAN);
+
 				}
 
 
@@ -276,7 +247,7 @@ superlucky.service('editorservice',function(){
 
 				// PANN ROW
 				_this.PANN_LINE = Math.floor(_this.PANN_HEIGHT / _this.font_height);
-				_this.PANN_ROW = _this.line_to_row(_this.PANN_LINE);
+				_this.PANN_ROW = _this.numObj.line_to_row(_this.PANN_LINE);
 				
 
 			}
@@ -340,7 +311,7 @@ superlucky.service('editorservice',function(){
 					_this.cur_ins.set_insert_cursor(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
 					// 판 scrollTop
-					var top = _this.row_to_px(_this.START_ROW);
+					var top = _this.numObj.row_to_px(_this.START_ROW);
 					angular.element("#editor_pann")[0].scrollTop=top;
 
 
@@ -410,31 +381,30 @@ superlucky.service('editorservice',function(){
 			editor_pann.prototype.key_fun = function(keyCode,keyChar,ctrlKey){
 				var _this = this;
 
-
 				// 큐에 넣기
-				//_this.queue_insert(String.fromCharCode(keyCode));
 				_this.queue_insert(keyChar);
 
 				console.log(_this.common_queue);
-
-
-
 
 				// 입력모드일때 바인딩
 				if(_this.MODE=="INSERT"){
 
 					console.log("input");
+
 					// 라인 변경시 처리
 					var pre_height = _this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).css('height');
 					setTimeout(function() {
 						var change_height = _this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).css('height');
 						if(pre_height != change_height){
-							_this.$NUM_DIV.find("div").eq(_this.cur_ins.ROW-1).css('height',change_height);
+							//_this.$NUM_DIV.find("div").eq(_this.cur_ins.ROW-1).css('height',change_height);
+							_this.numObj.$NUM_DIV.find("div").eq(_this.cur_ins.ROW-1).css('height',change_height);
+
 							_this.LINE_CHANGE = true;
 						}
 					}, 0);
 
 
+					// 텝키
 					if(keyCode==9){
 						var tapnode = document.createTextNode('    ');
 						var carotnode = document.createElement('span');
@@ -450,7 +420,6 @@ superlucky.service('editorservice',function(){
 						selection.removeAllRanges();
 						selection.addRange(range);
 						range.deleteContents();
-
 					}
 
 
@@ -473,6 +442,23 @@ superlucky.service('editorservice',function(){
 
 					//_this.cur_ins.cursor_blink_stop('show');
 					_this.cur_ins.$CURSOR_DIV.show();
+					
+					// 비주얼박스를 그리거나 취소함
+					if(_this.visualObj){
+						console.log("keyCodekeyCode");
+						console.log(keyCode);
+						if( keyCode==27 || keyCode==86 ){
+							_this.visualObj = null;
+							_this.$DIV.find(".editor_visual").css('display','none');
+						}else{
+							setTimeout(function() {
+								_this.visualObj.render(_this.cur_ins.ROW,_this.cur_ins.COLUMN);
+							}, 0);
+						}
+					}else if("v" == _this.queue_get(1).join('')){
+						//비주얼 모드
+						_this.visualObj = new editor_visual("none",_this.font_width,_this.font_height,_this.cur_ins.ROW,_this.cur_ins.COLUMN,_this.$DIV.find(".editor_visual"));
+					}
 
 					// z + z
 					if("zz"==_this.queue_get(2).join('')){
@@ -480,13 +466,13 @@ superlucky.service('editorservice',function(){
 						if(_this.START_ROW < 1){
 							_this.START_ROW = 1;
 						}
-						var top = _this.row_to_px(_this.START_ROW);
+						var top = _this.numObj.row_to_px(_this.START_ROW);
 						angular.element("#editor_pann")[0].scrollTop=top;
 					}
 					// z + enter
 					else if(13==keyCode && "z"==_this.queue_get(2).join('').replace(/[^a-z]/g,'')){
 						_this.START_ROW = _this.cur_ins.ROW;
-						var top = _this.row_to_px(_this.START_ROW);
+						var top = _this.numObj.row_to_px(_this.START_ROW);
 						angular.element("#editor_pann")[0].scrollTop=top;
 					}
 					// z + -
@@ -497,7 +483,7 @@ superlucky.service('editorservice',function(){
 							_this.START_ROW = 1;
 						}
 
-						var top = _this.row_to_px(_this.START_ROW);
+						var top = _this.numObj.row_to_px(_this.START_ROW);
 						angular.element("#editor_pann")[0].scrollTop=top;
 					}
 					// 한페이지 뒤로
@@ -505,24 +491,24 @@ superlucky.service('editorservice',function(){
 
 						var diff_cur = _this.cur_ins.ROW - _this.START_ROW;
 
-						var start_line = _this.row_to_line(_this.START_ROW);
+						var start_line = _this.numObj.row_to_line(_this.START_ROW);
 						var last_line = start_line + _this.PANN_LINE -1;
 
-						_this.START_ROW = _this.line_to_row(last_line) + 1;
+						_this.START_ROW = _this.numObj.line_to_row(last_line) + 1;
 						if(_this.START_ROW > _this.TOTAL_ROW){
-							_this.START_ROW = _this.line_to_row(start_line);
+							_this.START_ROW = _this.numObj.line_to_row(start_line);
 						}
 
-						start_line = _this.row_to_line(_this.START_ROW);
+						start_line = _this.numObj.row_to_line(_this.START_ROW);
 						last_line = start_line + _this.PANN_LINE -1;
 
-						if( _this.line_to_row(last_line) >= _this.TOTAL_ROW){
-							last_line  = _this.row_to_line(_this.TOTAL_ROW);
+						if( _this.numObj.line_to_row(last_line) >= _this.TOTAL_ROW){
+							last_line  = _this.numObj.row_to_line(_this.TOTAL_ROW);
 							start_line = last_line - _this.PANN_LINE + 1;
-							_this.START_ROW = _this.line_to_row(start_line);
+							_this.START_ROW = _this.numObj.line_to_row(start_line);
 						}
 
-						var top = _this.row_to_px(_this.START_ROW);
+						var top = _this.numObj.row_to_px(_this.START_ROW);
 						angular.element("#editor_pann")[0].scrollTop=top;
 
 						_this.cur_ins.ROW = _this.START_ROW+diff_cur;
@@ -530,7 +516,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.ROW = _this.TOTAL_ROW;
 						}
 
-						var top = _this.row_to_px(_this.cur_ins.ROW);
+						var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
 						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
@@ -540,7 +526,7 @@ superlucky.service('editorservice',function(){
 
 						var diff_cur = _this.cur_ins.ROW - _this.START_ROW;
 
-						var start_line = _this.row_to_line(_this.START_ROW);
+						var start_line = _this.numObj.row_to_line(_this.START_ROW);
 						var last_line = start_line + _this.PANN_LINE -1;
 
 
@@ -552,15 +538,15 @@ superlucky.service('editorservice',function(){
 						if(start_line < 0){
 							start_line = 1;
 						}
-						_this.START_ROW = _this.line_to_row(start_line);
-						var top = _this.row_to_px(_this.START_ROW);
+						_this.START_ROW = _this.numObj.line_to_row(start_line);
+						var top = _this.numObj.row_to_px(_this.START_ROW);
 						angular.element("#editor_pann")[0].scrollTop=top;
 
 						_this.cur_ins.ROW = _this.START_ROW+diff_cur;
 						if(_this.cur_ins.ROW <= 1){
 							_this.cur_ins.ROW = 1;
 						}
-						var top = _this.row_to_px(_this.cur_ins.ROW);
+						var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
 						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
@@ -592,12 +578,12 @@ superlucky.service('editorservice',function(){
 
 						var diff_cur = _this.cur_ins.ROW - _this.START_ROW;
 
-						var start_line = _this.row_to_line(_this.START_ROW);
+						var start_line = _this.numObj.row_to_line(_this.START_ROW);
 						var last_line = start_line + _this.PANN_LINE -1;
 
 
-						_this.START_ROW = Math.round((_this.line_to_row(last_line) - _this.START_ROW)/2) + _this.START_ROW;
-						var top = _this.row_to_px(_this.START_ROW);
+						_this.START_ROW = Math.round((_this.numObj.line_to_row(last_line) - _this.START_ROW)/2) + _this.START_ROW;
+						var top = _this.numObj.row_to_px(_this.START_ROW);
 						angular.element("#editor_pann")[0].scrollTop=top;
 
 						_this.cur_ins.ROW = _this.START_ROW+diff_cur;
@@ -605,7 +591,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.ROW = _this.TOTAL_ROW;
 						}
 
-						var top = _this.row_to_px(_this.cur_ins.ROW);
+						var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
 
 						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
@@ -616,15 +602,15 @@ superlucky.service('editorservice',function(){
 
 						var diff_cur = _this.cur_ins.ROW - _this.START_ROW;
 
-						var start_line = _this.row_to_line(_this.START_ROW);
+						var start_line = _this.numObj.row_to_line(_this.START_ROW);
 						var last_line = start_line + _this.PANN_LINE -1;
 
-						_this.START_ROW = _this.START_ROW - Math.round((_this.line_to_row(last_line) - _this.START_ROW)/2);
+						_this.START_ROW = _this.START_ROW - Math.round((_this.numObj.line_to_row(last_line) - _this.START_ROW)/2);
 						if(_this.START_ROW < 1){
 							_this.START_ROW = 1;
 						}
 
-						var top = _this.row_to_px(_this.START_ROW);
+						var top = _this.numObj.row_to_px(_this.START_ROW);
 						angular.element("#editor_pann")[0].scrollTop=top;
 
 						_this.cur_ins.ROW = _this.START_ROW+diff_cur;
@@ -632,7 +618,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.ROW = 1;
 						}
 
-						var top = _this.row_to_px(_this.cur_ins.ROW);
+						var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
 						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
@@ -664,16 +650,16 @@ superlucky.service('editorservice',function(){
 							_this.cursor_column_reset(_this.line_ins.end);
 
 							//var top = (_this.cur_ins.ROW-1) * _this.font_height;
-							var top = _this.row_to_px(_this.cur_ins.ROW);
+							var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 							_this.$DIV.find(".editor_cursor").css("top",top+"px");
 
 							// 판을 마지막으로 이동
 
-							var last_line  = _this.row_to_line(_this.TOTAL_ROW);
+							var last_line  = _this.numObj.row_to_line(_this.TOTAL_ROW);
 							var start_line = last_line - _this.PANN_LINE + 1;
-							_this.START_ROW = _this.line_to_row(start_line);
+							_this.START_ROW = _this.numObj.line_to_row(start_line);
 
-							var top = _this.row_to_px(_this.START_ROW);
+							var top = _this.numObj.row_to_px(_this.START_ROW);
 							angular.element("#editor_pann")[0].scrollTop=top;
 					}
 					// 줄삭제
@@ -743,11 +729,11 @@ superlucky.service('editorservice',function(){
 					// 판의 중간으로 이동
 					else if("M" == keyChar){
 
-						var start_line = _this.row_to_line(_this.START_ROW);
+						var start_line = _this.numObj.row_to_line(_this.START_ROW);
 						var last_line = start_line + _this.PANN_LINE -1;
 
 
-						_this.cur_ins.ROW = Math.round((_this.line_to_row(last_line) - _this.START_ROW)/2) + _this.START_ROW;
+						_this.cur_ins.ROW = Math.round((_this.numObj.line_to_row(last_line) - _this.START_ROW)/2) + _this.START_ROW;
 
 
 						_this.cursor_column_reset(_this.line_ins.end);
@@ -759,9 +745,9 @@ superlucky.service('editorservice',function(){
 					else if("L" == keyChar){
 						//_this.cur_ins.ROW = _this.START_ROW + _this.PANN_ROW -1;
 
-						var start_line = _this.row_to_line(_this.START_ROW);
+						var start_line = _this.numObj.row_to_line(_this.START_ROW);
 						var last_line = start_line + _this.PANN_LINE -1;
-						_this.cur_ins.ROW = _this.line_to_row(last_line);
+						_this.cur_ins.ROW = _this.numObj.line_to_row(last_line);
 
 						//var top = (_this.cur_ins.ROW-1) * _this.font_height;
 						//var top = _this.row_to_px(_this.cur_ins.ROW);
@@ -803,16 +789,16 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.ROW++;
 
 							// 커서의 실제라인
-							var cursor_line = _this.row_to_line(_this.cur_ins.ROW);
+							var cursor_line = _this.numObj.row_to_line(_this.cur_ins.ROW);
 
 							// 마지막 ROW의 실제라인
-							var start_line = _this.row_to_line(_this.START_ROW);
+							var start_line = _this.numObj.row_to_line(_this.START_ROW);
 							var last_line = start_line + _this.PANN_LINE -1;
 
 							if(cursor_line > last_line){
 								start_line = cursor_line - _this.PANN_LINE +1;
-								_this.START_ROW = _this.line_to_row(start_line);
-								var move_pann = _this.line_to_px(start_line);
+								_this.START_ROW = _this.numObj.line_to_row(start_line);
+								var move_pann = _this.numObj.line_to_px(start_line);
 								angular.element("#editor_pann")[0].scrollTop=move_pann;
 							}
 
@@ -833,7 +819,7 @@ superlucky.service('editorservice',function(){
 							if( _this.START_ROW > _this.cur_ins.ROW){
 								_this.START_ROW = _this.cur_ins.ROW;
 
-								var move_pann = _this.row_to_px(_this.START_ROW);
+								var move_pann = _this.numObj.row_to_px(_this.START_ROW);
 								angular.element("#editor_pann")[0].scrollTop=move_pann;
 							}
 
@@ -1157,21 +1143,110 @@ superlucky.service('editorservice',function(){
 			}
 		}
 	}
+	// 넘버라인 판 클래스
+	function number_line(font_height){
+
+		// EDITOR 판
+		this.$NUM_DIV = angular.element(document.getElementById('editor_num_area'));
+		this.font_height = font_height;
+
+		// 해당 라인의 ROW 구하기
+		if(typeof this.line_to_row != "function"){
+			number_line.prototype.line_to_row = function(line){
+				var _this = this;
+				for(var i = line ; i >= 1 ; i--){
+					if(_this.$NUM_DIV.find("[data-accrue='"+i+"']").length > 0){
+						return _this.$NUM_DIV.find("[data-accrue='"+i+"']").data('num');
+					}
+				}
+			}
+		}
+
+		// 해당 Row의 라인 구하기
+		if(typeof this.row_to_line != "function"){
+			number_line.prototype.row_to_line = function(row){
+				var _this = this;
+				return parseInt(_this.$NUM_DIV.find("[data-num='"+row+"']").data('accrue'));
+			}
+		}
+
+
+		// ROW 의 px 반환
+		if(typeof this.row_to_px != "function"){
+			number_line.prototype.row_to_px = function(ROW){
+				var _this = this;
+				return parseInt(_this.$NUM_DIV.find("[data-num='"+ROW+"']").data('accrue_px'));
+			}
+		}
+
+		// line 의 px 반환
+		if(typeof this.line_to_px != "function"){
+			number_line.prototype.line_to_px = function(line){
+				var _this = this;
+				return (line-1) * _this.font_height;
+			}
+		}
+
+	}
+
+	// 비쥬얼 블럭 클래스
+	function editor_visual(visual_type, font_width, font_height, s_row, s_column, $BLOCK){
+		// 비쥬얼 모드의 세가지 타입(shift, ctrl, none)
+		this.visual_type = visual_type;
+
+		// 처음상태 기억
+		this.ROW = s_row;
+		this.COLUMN = s_column;
+		$BLOCK.css('display','block');
+		this.BLOCK = $BLOCK;
+		this.font_width  = font_width;
+		this.font_height = font_height;
+
+		if(typeof this.render != "function"){
+			editor_visual.prototype.render = function(l_row,l_column){
+				var _this = this;
+
+				var numObj = new number_line(_this.font_height);
+
+				console.log(_this.ROW);
+				console.log(_this.COLUMN);
+				console.log(l_row);
+				console.log(l_column);
+				console.log('');
+
+				//var top = (_this.ROW-1) * _this.font_height;
+				var top = numObj.row_to_px(_this.ROW);
+				var width_row = l_column - _this.COLUMN;
+
+				if(width_row > 0){
+					var left  = (_this.COLUMN-1) * _this.font_width;
+				}else{
+					var left  = (l_column-1) * _this.font_width;
+					width_row = (width_row * -1)-1;
+				}
+				var width = (width_row+1) * _this.font_width;
+
+				_this.BLOCK.css('top',top+"px");
+				_this.BLOCK.css('left',left+"px");
+				_this.BLOCK.css('width',width+"px");
+
+			}
+		}
+	}
 
 	// 인스턴스 생성
 	var editorPann = new editor_pann();
 	editorPann.file_load();
 
-
+	// 리사이즈 바인딩
 	angular.element(window).resize(function(){
 		editorPann.pann_resize();
 	});
 
+	// 키 에벤트 바인딩
 	$scope.key_esc = function(event){
 		editorPann.key_esc();
 	}
-
-	//$scope.key_press = function(event){ console.log("press"); } 
 	$scope.key_down = function(event){
 		editorPann.event_memory = event;
 
