@@ -197,7 +197,7 @@ superlucky.service('editorservice',function(){
 				var _this = this;
 
 				_this.$DIV.html('<div style="position:relative;"><div class="editor_cursor">&nbsp;</div></div>');
-				_this.$DIV.append('<div style="position:relative;"><div class="editor_visual">&nbsp;</div></div>');
+				//_this.$DIV.append('<div style="position:relative;"><div class="editor_visual">&nbsp;</div></div>');
 				//_this.$NUM_DIV.html('');
 				_this.numObj.$NUM_DIV.html('');
 
@@ -449,7 +449,7 @@ superlucky.service('editorservice',function(){
 						console.log(keyCode);
 						if( keyCode==27 || keyCode==86 ){
 							_this.visualObj = null;
-							_this.$DIV.find(".editor_visual").css('display','none');
+							_this.$DIV.find(".editor_visual").remove();
 						}else{
 							setTimeout(function() {
 								_this.visualObj.render(_this.cur_ins.ROW,_this.cur_ins.COLUMN);
@@ -457,7 +457,7 @@ superlucky.service('editorservice',function(){
 						}
 					}else if("v" == _this.queue_get(1).join('')){
 						//비주얼 모드
-						_this.visualObj = new editor_visual("none",_this.font_width,_this.font_height,_this.cur_ins.ROW,_this.cur_ins.COLUMN,_this.$DIV.find(".editor_visual"));
+						_this.visualObj = new editor_visual("none",_this.font_width,_this.font_height,_this.cur_ins.ROW,_this.cur_ins.COLUMN,_this.$DIV,_this.PANN_EDITOR_WIDTH_COLUMN);
 					}
 
 					// z + z
@@ -1170,6 +1170,22 @@ superlucky.service('editorservice',function(){
 			}
 		}
 
+		// 해당 Row의 모든 line반환
+		if(typeof this.row_to_lineall != "function"){
+			number_line.prototype.row_to_lineall = function(row){
+				var _this = this;
+				var start_line = _this.row_to_line(row);
+				var height_px = parseInt(_this.$NUM_DIV.find("[data-num='"+row+"']").css('height').replace(/[^0-9]/g,""));
+				var cnt_line =  height_px / _this.font_height;
+
+				var line_array = [];
+				for(var i=0 ; i < cnt_line ; i++){
+					line_array.push(start_line+i);
+				}
+				return line_array;
+			}
+		}
+
 
 		// ROW 의 px 반환
 		if(typeof this.row_to_px != "function"){
@@ -1187,20 +1203,35 @@ superlucky.service('editorservice',function(){
 			}
 		}
 
+		// 현재 커서의 라인을 반환
+		if(typeof this.cursor_to_line != "function"){
+			number_line.prototype.cursor_to_line = function(row,column,PANN_EDITOR_WIDTH_COLUMN){
+				var _this = this;
+
+				var line = _this.row_to_line(row);
+				var line_cnt = Math.ceil(column / PANN_EDITOR_WIDTH_COLUMN);
+				return line+(line_cnt-1);
+			}
+		}
+
 	}
 
 	// 비쥬얼 블럭 클래스
-	function editor_visual(visual_type, font_width, font_height, s_row, s_column, $BLOCK){
+	function editor_visual(visual_type, font_width, font_height, s_row, s_column, $PANN_DIV, PANN_EDITOR_WIDTH_COLUMN){
 		// 비쥬얼 모드의 세가지 타입(shift, ctrl, none)
 		this.visual_type = visual_type;
 
 		// 처음상태 기억
 		this.ROW = s_row;
 		this.COLUMN = s_column;
-		$BLOCK.css('display','block');
-		this.BLOCK = $BLOCK;
+		//$BLOCK.css('display','block');
+		//this.BLOCK = $BLOCK;
 		this.font_width  = font_width;
 		this.font_height = font_height;
+
+		this.$PANN_DIV = $PANN_DIV;
+		this.PANN_EDITOR_WIDTH_COLUMN = PANN_EDITOR_WIDTH_COLUMN;
+
 
 		if(typeof this.render != "function"){
 			editor_visual.prototype.render = function(l_row,l_column){
@@ -1208,27 +1239,69 @@ superlucky.service('editorservice',function(){
 
 				var numObj = new number_line(_this.font_height);
 
-				console.log(_this.ROW);
-				console.log(_this.COLUMN);
-				console.log(l_row);
-				console.log(l_column);
-				console.log('');
-
-				//var top = (_this.ROW-1) * _this.font_height;
-				var top = numObj.row_to_px(_this.ROW);
-				var width_row = l_column - _this.COLUMN;
-
-				if(width_row > 0){
-					var left  = (_this.COLUMN-1) * _this.font_width;
-				}else{
-					var left  = (l_column-1) * _this.font_width;
-					width_row = (width_row * -1)-1;
+				var start_line = numObj.cursor_to_line(_this.ROW,_this.COLUMN,_this.PANN_EDITOR_WIDTH_COLUMN);
+				var end_line   = numObj.cursor_to_line(l_row,l_column,_this.PANN_EDITOR_WIDTH_COLUMN);
+				console.log(start_line);
+				console.log(end_line);
+				// 해당하는 라인 추출
+				var reverse_row = false;
+				if(start_line > end_line){
+					var tmp_line = start_line;
+					start_line = end_line;
+					end_line = tmp_line;
+					reverse_row = true;
 				}
-				var width = (width_row+1) * _this.font_width;
 
-				_this.BLOCK.css('top',top+"px");
-				_this.BLOCK.css('left',left+"px");
-				_this.BLOCK.css('width',width+"px");
+				var line_array = [];
+				for (var i = start_line; i <= end_line; i++) {
+					line_array.push(i);
+				}
+				console.log(line_array);
+
+
+
+				// 해당하는 라인만큼 div를 만듬
+
+				_this.$PANN_DIV.find(".editor_visual").remove();
+				for(line_key in line_array){
+					var line = line_array[line_key];
+
+					if(_this.$PANN_DIV.find("[data-line='"+line+"']").length ==0){
+						_this.$PANN_DIV.prepend('<div style="position:relative;"><div class="editor_visual" data-line="'+line+'">&nbsp;</div></div>');
+					}
+					var $line = _this.$PANN_DIV.find("[data-line='"+line+"']");
+					var top =  ((line-1)*_this.font_height);
+					$line.css('top',top+"px").css('width','10px').css('display','block');
+
+					var current_line = numObj.cursor_to_line(l_row,l_column,_this.PANN_EDITOR_WIDTH_COLUMN);
+					if(start_line == line && end_line == line ){
+						var width_row = l_column - _this.COLUMN;
+
+						if(width_row > 0){
+							var left  = (_this.COLUMN-1) * _this.font_width;
+						}else{
+							var left  = (l_column-1) * _this.font_width;
+							width_row = (width_row * -1)-1;
+						}
+						var width = (width_row+1) * _this.font_width;
+						$line.css('width',width+"px");
+						$line.css('left',left+"px");
+					}
+
+					/*
+					else if(start_line == line && end_line > line){
+						var left  = (_this.COLUMN-1) * _this.font_width;
+					}
+					*/
+
+					else if(start_line < line && end_line == line){
+						var left = 0;
+						var width = (l_column) * _this.font_width;
+						$line.css('width',width+"px");
+						$line.css('left',left+"px");
+					}
+				}
+
 
 			}
 		}
