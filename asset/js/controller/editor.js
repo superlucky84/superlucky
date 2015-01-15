@@ -853,7 +853,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.COLUMN = _this.line_ins.end;
 						}
 
-						var return_column = _this.line_ins.move_w("w",_this.cur_ins.COLUMN);
+						var return_column = _this.cur_ins.move_w("w",_this.line_ins.line_string);
 						if(return_column=='next_line'){
 
 							if(_this.cur_ins.ROW >= _this.TOTAL_ROW){
@@ -863,7 +863,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.ROW++;
 							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 							_this.cur_ins.COLUMN = _this.line_ins.start;
-							_this.cur_ins.COLUMN = _this.line_ins.move_w("w",_this.cur_ins.COLUMN);
+							_this.cur_ins.COLUMN = _this.cur_ins.move_w("w",_this.line_ins.line_string);
 						}else{
 							_this.cur_ins.COLUMN = return_column;
 						}
@@ -876,7 +876,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.COLUMN = _this.line_ins.end;
 						}
 
-						var return_column = _this.line_ins.move_w("e",_this.cur_ins.COLUMN);
+						var return_column = _this.cur_ins.move_w("e",_this.line_ins.line_string);
 						if(return_column=='next_line'){
 
 							if(_this.cur_ins.ROW >= _this.TOTAL_ROW){
@@ -886,7 +886,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.ROW++;
 							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 							_this.cur_ins.COLUMN = _this.line_ins.start;
-							_this.cur_ins.COLUMN = _this.line_ins.move_w("e",_this.cur_ins.COLUMN);
+							_this.cur_ins.COLUMN = _this.cur_ins.move_w("e",_this.line_ins.line_string);
 						}else{
 							_this.cur_ins.COLUMN = return_column;
 						}
@@ -898,7 +898,7 @@ superlucky.service('editorservice',function(){
 						if(_this.line_ins.end < _this.cur_ins.COLUMN){
 							_this.cur_ins.COLUMN = _this.line_ins.end;
 						}
-						var return_column = _this.line_ins.move_b(_this.cur_ins.COLUMN);
+						var return_column = _this.cur_ins.move_b(_this.line_ins.line_string);
 						if(return_column=='prev_line'){
 							if(_this.cur_ins.ROW == 1){
 								return false;
@@ -906,7 +906,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.ROW--;
 							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 							_this.cur_ins.COLUMN = _this.line_ins.end;
-							_this.cur_ins.COLUMN = _this.line_ins.move_b(_this.cur_ins.COLUMN);
+							_this.cur_ins.COLUMN = _this.cur_ins.move_b(_this.line_ins.line_string);
 						}else{
 							_this.cur_ins.COLUMN = return_column;
 						}
@@ -991,8 +991,6 @@ superlucky.service('editorservice',function(){
 				}
 				_this.line_width = _this.line_size * _this.font_width;
 
-
-
 				// start 구하기
 				var start_match = line_string.match(/^[ ]+/);
 				if(start_match){
@@ -1006,56 +1004,6 @@ superlucky.service('editorservice',function(){
 				if(end_match){
 					_this.end = end_match['index'];
 				}
-			}
-		}
-		// 단어이동 forward
-		if(typeof this.move_w != "function"){
-			editor_line.prototype.move_w = function(move_type,start_pos){
-
-				var _this = this;
-				var line_s_cut = _this.line_string.substr(start_pos);
-				var w_anal = null;
-
-				if("w" == move_type){
-					if(_this.line_string.substring(start_pos-1,start_pos).match(/[^\w ]/)){
-						var w_anal = line_s_cut.match(/((^|[ ]|[^\w])[\w]|[^\w ])/);
-					}else{
-						var w_anal = line_s_cut.match(/(([ ]|[^\w])[\w]|[^\w ])/);
-					}
-				}
-				else if("e" == move_type){
-					var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]|$))/);
-				}
-				if(w_anal==null){
-					return 'next_line';
-				}
-
-				var cursor = start_pos;
-				if(w_anal){
-					cursor = w_anal['index']+start_pos;
-					if(w_anal[0].substr(0,1)==" "){
-						cursor = cursor+1;
-					}
-					cursor =  cursor+1;
-				}
-				return cursor;
-			}
-		}
-		// 단어이동 back
-		if(typeof this.move_b != "function"){
-			editor_line.prototype.move_b = function(start_pos){
-				var _this = this;
-				var line_s_cut = _this.line_string.substr(0,start_pos-1);
-				line_s_cut = line_s_cut.split("").reverse().join("");
-
-				var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]|$))/);
-				var cursor = start_pos;
-				if(w_anal){
-					cursor = start_pos - w_anal['index']-1;
-				}else{
-					return 'prev_line';
-				}
-				return cursor;
 			}
 		}
 
@@ -1142,6 +1090,63 @@ superlucky.service('editorservice',function(){
 				range.deleteContents();
 			}
 		}
+
+		// 단어이동 forward
+		if(typeof this.move_w != "function"){
+			editor_cursor.prototype.move_w = function(move_type,line_string){
+
+				var _this = this;
+
+				var start_pos = _this.COLUMN;
+
+				var line_s_cut = line_string.substr(start_pos);
+				var w_anal = null;
+
+				if("w" == move_type){
+					if(line_string.substring(start_pos-1,start_pos).match(/[^\w ]/)){
+						var w_anal = line_s_cut.match(/((^|[ ]|[^\w])[\w]|[^\w ])/);
+					}else{
+						var w_anal = line_s_cut.match(/(([ ]|[^\w])[\w]|[^\w ])/);
+					}
+				}
+				else if("e" == move_type){
+					var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]|$))/);
+				}
+				if(w_anal==null){
+					return 'next_line';
+				}
+
+				var cursor = start_pos;
+				if(w_anal){
+					cursor = w_anal['index']+start_pos;
+					if(w_anal[0].substr(0,1)==" "){
+						cursor = cursor+1;
+					}
+					cursor =  cursor+1;
+				}
+				return cursor;
+			}
+		}
+		// 단어이동 back
+		if(typeof this.move_b != "function"){
+			editor_cursor.prototype.move_b = function(line_string){
+				var _this = this;
+				var start_pos = _this.COLUMN;
+
+				var line_s_cut = line_string.substr(0,start_pos-1);
+				line_s_cut = line_s_cut.split("").reverse().join("");
+
+				var w_anal = line_s_cut.match(/([^\w ]|[\w]([ ]|[^\w]|$))/);
+				var cursor = start_pos;
+				if(w_anal){
+					cursor = start_pos - w_anal['index']-1;
+				}else{
+					return 'prev_line';
+				}
+				return cursor;
+			}
+		}
+
 	}
 	// 넘버라인 판 클래스
 	function number_line(font_height){
