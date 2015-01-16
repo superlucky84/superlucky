@@ -180,7 +180,7 @@ superlucky.service('editorservice',function(){
 						// 커서 인스턴스 생성
 						_this.cur_ins = new editor_cursor(_this.font_width,_this.font_height,_this.$DIV.find(".editor_cursor"));
 
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 						_this.$DIV.attr("contenteditable",false);
 						_this.cur_ins.cursor_blink();
 
@@ -348,7 +348,7 @@ superlucky.service('editorservice',function(){
 					}
 
 					// 라인 정보 다시분석
-					_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+					_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
 					// 컬럼리셋
 					_this.cursor_column_reset(_this.line_ins.end);
@@ -518,7 +518,7 @@ superlucky.service('editorservice',function(){
 
 						var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
 					}
 					// 한페이지 앞으로
@@ -548,7 +548,7 @@ superlucky.service('editorservice',function(){
 						}
 						var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
 
 
@@ -569,7 +569,7 @@ superlucky.service('editorservice',function(){
 						}
 						var top = (_this.cur_ins.ROW-1) * _this.font_height;
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 						*/
 					}
 
@@ -594,7 +594,7 @@ superlucky.service('editorservice',function(){
 						var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
 
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
 					}
 					// 반페이지 앞으로
@@ -620,7 +620,7 @@ superlucky.service('editorservice',function(){
 
 						var top = _this.numObj.row_to_px(_this.cur_ins.ROW);
 						_this.$DIV.find(".editor_cursor").css("top",top+"px");
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
 					}
 					// 첫번째 줄로 이동
@@ -628,7 +628,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.ROW = 1;
 
 							// 라인분석
-							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 							// 커서위치 재정렬
 							_this.cursor_column_reset(_this.line_ins.end);
 
@@ -645,7 +645,7 @@ superlucky.service('editorservice',function(){
 							_this.cur_ins.ROW = _this.TOTAL_ROW;
 
 							// 라인분석
-							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 							// 커서위치 재정렬
 							_this.cursor_column_reset(_this.line_ins.end);
 
@@ -666,7 +666,7 @@ superlucky.service('editorservice',function(){
 					else if('dd' == _this.queue_get(2).join('')){
 
 						_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).remove();
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 						_this.TOTAL_ROW--;
 						// queue 비우기
 						_this.common_queue = []
@@ -690,14 +690,14 @@ superlucky.service('editorservice',function(){
 							_this.$DIV.find("pre").eq(_this.cur_ins.ROW-2).after("<pre class='editor_line'></pre>");
 							//_this.cur_ins.ROW--;
 							_this.cur_ins.COLUMN = 1;
-							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
 						}
 						else if("o" == keyChar){
 							_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).after("<pre class='editor_line'></pre>");
 							_this.cur_ins.ROW++;
 							_this.cur_ins.COLUMN = 1;
-							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 						}
 						_this.mode_change("INSERT");
 					}
@@ -712,7 +712,7 @@ superlucky.service('editorservice',function(){
 						return_text = editorservice.htmlspecialchars(return_text);
 						_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1).html(return_text);
 						// 커서위치 재정렬
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 					}
 					// 판의 처음으로 이동
 					else if("H" == keyChar){
@@ -724,7 +724,7 @@ superlucky.service('editorservice',function(){
 
 
 						// 라인분석
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 					}
 					// 판의 중간으로 이동
 					else if("M" == keyChar){
@@ -739,7 +739,7 @@ superlucky.service('editorservice',function(){
 						_this.cursor_column_reset(_this.line_ins.end);
 
 						// 라인분석
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 					}
 					// 판의 마지막으로 이동
 					else if("L" == keyChar){
@@ -756,7 +756,7 @@ superlucky.service('editorservice',function(){
 						_this.cursor_column_reset(_this.line_ins.end);
 
 						// 라인분석
-						_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+						_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 					}
 					// 왼쪽
 					else if("h" == keyChar){
@@ -803,7 +803,7 @@ superlucky.service('editorservice',function(){
 							}
 
 							// 라인분석
-							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 
 							// 커서위치 재정렬
 							_this.cursor_column_reset(_this.line_ins.end);
@@ -824,7 +824,7 @@ superlucky.service('editorservice',function(){
 							}
 
 							// 라인분석
-							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 							// 커서위치 재정렬
 							_this.cursor_column_reset(_this.line_ins.end);
 
@@ -861,7 +861,7 @@ superlucky.service('editorservice',function(){
 							}
 
 							_this.cur_ins.ROW++;
-							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 							_this.cur_ins.COLUMN = _this.line_ins.start;
 							_this.cur_ins.COLUMN = _this.cur_ins.move_w("w",_this.line_ins.line_string);
 						}else{
@@ -884,7 +884,7 @@ superlucky.service('editorservice',function(){
 							}
 
 							_this.cur_ins.ROW++;
-							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 							_this.cur_ins.COLUMN = _this.line_ins.start;
 							_this.cur_ins.COLUMN = _this.cur_ins.move_w("e",_this.line_ins.line_string);
 						}else{
@@ -904,7 +904,7 @@ superlucky.service('editorservice',function(){
 								return false;
 							}
 							_this.cur_ins.ROW--;
-							_this.line_ins.analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
+							_this.line_ins.row_analisys(_this.$DIV.find("pre").eq(_this.cur_ins.ROW-1));
 							_this.cur_ins.COLUMN = _this.line_ins.end;
 							_this.cur_ins.COLUMN = _this.cur_ins.move_b(_this.line_ins.line_string);
 						}else{
@@ -959,9 +959,9 @@ superlucky.service('editorservice',function(){
 
 		// 폰트 넓이
 		this.font_width = font_width;
-		// 시작점
+		// ROW 시작점
 		this.start = 1;
-		// 종료점
+		// ROW 종료점
 		this.end = 1;
 		// 한라인이 차지하는 줄 수 (라인이 엄청 길때)
 		this.line_size = 0;
@@ -970,16 +970,54 @@ superlucky.service('editorservice',function(){
 		// list_string
 		this.line_string = "";
 
-		// 라인분석
-		if(typeof this.analisys != "function"){
-			editor_line.prototype.analisys = function(line){
-
+		// line 분석 (라인의 시작픽셀 종료필셀 구함)
+		if(typeof this.line_analisys != "function"){
+			editor_line.prototype.line_analisys = function($ROW,start_line,line,PANN_EDITOR_WIDTH_COLUMN){
 				var _this = this;
-				//var line_string = line.html().replace(/&nbsp;/g," ");
-				//line_string = line_string.replace(/&amp;/g,":");
+
+				_this.row_analisys($ROW);
+
+				var line_cnt = Math.ceil(_this.end / PANN_EDITOR_WIDTH_COLUMN);
+				//var line_cnt = line - start_line + 1;
+				if(line_cnt==1){
+					return {
+						'start' : _this.start,
+						'end' :_this.end 
+					};
+				}
+				// 여러줄의 ROW일때
+				else{
+					var line_cnt = line - start_line + 1;
+					var end = line_cnt * PANN_EDITOR_WIDTH_COLUMN;
+					var start = end - PANN_EDITOR_WIDTH_COLUMN;
+
+					var minus = (line_cnt - 2 ) * PANN_EDITOR_WIDTH_COLUMN;
+
+					start = start - minus;
+					end = end - minus;
+
+					return {
+						'start' : start,
+						'end' :  end
+					};
+				}
+
+
+				//console.log("_this.start");
+				//console.log(_this.start);
+				//console.log(_this.end);
+
+
+			}
+		}
+
+		// ROW 분석
+		if(typeof this.row_analisys != "function"){
+			editor_line.prototype.row_analisys = function(line){
+				var _this = this;
+
 				var line_string = editorservice.rhtmlspecialchars(line.html());
 				_this.line_string = line_string;
-
 
 				var line_width = parseInt(line.css('width').replace(/[^0-9]/,""));
 				var string_width = _this.line_string.length*_this.font_width;
@@ -1267,6 +1305,8 @@ superlucky.service('editorservice',function(){
 
 				// 해당하는 라인만큼 div를 만듬
 
+				var line_ins = new editor_line(_this.font_width);
+
 				_this.$PANN_DIV.find(".editor_visual").remove();
 				for(line_key in line_array){
 					var line = line_array[line_key];
@@ -1292,9 +1332,33 @@ superlucky.service('editorservice',function(){
 						$line.css('width',width+"px");
 						$line.css('left',left+"px");
 					}
+					else if( end_line > line){
+						
 
+						var $ROW = _this.$PANN_DIV.find("pre").eq(numObj.line_to_row(line)-1);
+						var left_width_obj = line_ins.line_analisys($ROW,numObj.line_to_row(line),line,_this.PANN_EDITOR_WIDTH_COLUMN);
+
+						console.log("left_width_obj");
+						console.log(left_width_obj);
+
+
+						if(start_line == line){
+							var left  = (_this.COLUMN-1) * _this.font_width;
+							var width = (left_width_obj.end - _this.COLUMN + 1) * _this.font_width;
+						}else{
+
+							var left = 0;
+							var width = left_width_obj.end * _this.font_width;
+						}
+
+
+						$line.css('width',width+"px");
+						$line.css('left', left+"px");
+
+
+					}
 					/*
-					else if(start_line == line && end_line > line){
+					else if(start_line == line){
 						var left  = (_this.COLUMN-1) * _this.font_width;
 					}
 					*/
